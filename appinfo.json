@@ -1,0 +1,77 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        "location",
+        "configurable"
+    ],
+    "companyName": "newKAMiKAZE",
+    "longName": "Flip watchface",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/months_en.png",
+                "name": "MONTHS_EN",
+                "type": "png"
+            },
+            {
+                "file": "images/months.png",
+                "name": "MONTHS",
+                "type": "png"
+            },
+            {
+                "file": "images/ampm.png",
+                "name": "AMPM",
+                "type": "png"
+            },
+            {
+                "file": "images/bluetooth.png",
+                "name": "BLUETOOTH",
+                "type": "png"
+            },
+            {
+                "file": "images/battery.png",
+                "name": "BATTERY",
+                "type": "png"
+            },
+            {
+                "file": "images/days.png",
+                "name": "DAYS",
+                "type": "png"
+            },
+            {
+                "file": "images/digits_date.png",
+                "name": "DIGITS_DATE",
+                "type": "png"
+            },
+            {
+                "file": "images/digits_clock.png",
+                "name": "DIGITS_CLOCK",
+                "type": "png"
+            },
+            {
+                "file": "images/days-background.png",
+                "name": "BACKGROUND",
+                "type": "png"
+            },
+            {
+                "file": "images/seconds.png",
+                "name": "SECONDS",
+                "type": "png"
+            },
+            {
+                "file": "images/preview.png",
+                "menuIcon": true,
+                "name": "PREVIEW",
+                "type": "png"
+            }
+        ]
+    },
+    "shortName": "Flip watchface",
+    "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
+    "versionCode": 1,
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": true
+    }
+}
