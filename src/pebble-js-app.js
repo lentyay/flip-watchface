@@ -30,7 +30,7 @@ Pebble.addEventListener("appmessage",
 
 Pebble.addEventListener('showConfiguration',
   function(e) {
-    Pebble.openURL("http://watchface.tmnhy.su/index_light.html");
+    Pebble.openURL("http://pebble.newkamikaze.com/");
   }
 );
 

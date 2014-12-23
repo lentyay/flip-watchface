@@ -40,6 +40,7 @@ static GBitmap *bmp_digits_date;
 static GBitmap *bmp_seconds;
 static GBitmap *bmp_background;
 static GBitmap *bmp_days;
+static GBitmap *bmp_days_en;
 static GBitmap *bmp_months;
 static GBitmap *bmp_months_en;
 static GBitmap *bmp_battery;
@@ -136,6 +137,7 @@ static void load_resources() {
     bmp_seconds = gbitmap_create_with_resource(RESOURCE_ID_SECONDS);
     bmp_background = gbitmap_create_with_resource(RESOURCE_ID_BACKGROUND);
     bmp_days = gbitmap_create_with_resource(RESOURCE_ID_DAYS);
+    bmp_days_en = gbitmap_create_with_resource(RESOURCE_ID_DAYS_EN);
     bmp_months = gbitmap_create_with_resource(RESOURCE_ID_MONTHS);
     bmp_months_en = gbitmap_create_with_resource(RESOURCE_ID_MONTHS_EN);
     bmp_battery = gbitmap_create_with_resource(RESOURCE_ID_BATTERY);
@@ -149,6 +151,7 @@ static void destroy_resources() {
     gbitmap_destroy(bmp_seconds);
     gbitmap_destroy(bmp_background);
     gbitmap_destroy(bmp_days);
+    gbitmap_destroy(bmp_days_en);
     gbitmap_destroy(bmp_months);
     gbitmap_destroy(bmp_months_en);
     gbitmap_destroy(bmp_battery);
@@ -191,39 +194,39 @@ static void update_standby(Layer *layer, GContext* ctx) {
 
     time_t temp = time(NULL);
     struct tm *tick_time = localtime(&temp);
-/*
+
+  // Время
+    // AM/PM
+    int ampm = 0;
     if (!clock_is_24h_style()) {
         if ( (tick_time->tm_hour - 12) >= 0 ) {
             ampm = 1;
         } else {
             ampm = 0;
         };
+        draw_picture(ctx, &bmp_ampm, GRect(62, 108, 20, 12), ampm);
+
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
     };
-*/
-    int hour_dicker = tick_time->tm_hour/10;
-    int hour_unit = tick_time->tm_hour%10;
-
+  
+    // Minutes
     int min_dicker = tick_time->tm_min/10;
     int min_unit = tick_time->tm_min%10;
+    draw_picture(ctx, &bmp_digits_clock, GRect(77, 61, 29, 43), min_dicker);
+    draw_picture(ctx, &bmp_digits_clock, GRect(109, 61, 29, 43), min_unit);
 
-    // Рисуем цифры
+    // Hours
+    int hour_dicker = tick_time->tm_hour/10;
+    int hour_unit = tick_time->tm_hour%10;
     if (hour_dicker) {
         draw_picture(ctx, &bmp_digits_clock, GRect(5, 61, 29, 43), hour_dicker);
     } else {
         draw_picture(ctx, &bmp_digits_clock, GRect(5, 61, 29, 43), 0);
     };
     draw_picture(ctx, &bmp_digits_clock, GRect(38, 61, 29, 43), hour_unit);
-/*
-    if (!clock_is_24h_style()) {
-        draw_picture(ctx, &bmp_ampm, GRect(17, 86, 29, 43), ampm);
-    };
-*/
-    draw_picture(ctx, &bmp_digits_clock, GRect(77, 61, 29, 43), min_dicker);
-    draw_picture(ctx, &bmp_digits_clock, GRect(109, 61, 29, 43), min_unit);
-
-    // Рисуем разделитель
+  
+  // Рисуем разделитель
     if (settings.s_standby_i) {
           graphics_context_set_fill_color(ctx, GColorBlack);
     } else {
@@ -239,6 +242,15 @@ static void update_standby(Layer *layer, GContext* ctx) {
         .size = GSize(4, 4)
     };
     graphics_fill_rect(ctx, frame, 0, GCornerNone);
+
+    // AM/PM
+    if (!clock_is_24h_style()) {
+      frame = (GRect) {
+          .origin = GPoint(20, 107),
+          .size = GSize(104, 1)
+      };
+      graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    }
 }
 
 static void update_info(Layer *layer, GContext* ctx) {
@@ -301,7 +313,7 @@ static void update_info(Layer *layer, GContext* ctx) {
     };
     draw_picture(ctx, &bmp_digits_clock, GRect(38, 15, 29, 43), hour_unit);
   
-    // Рисуем разделитель
+  // Рисуем разделитель
     if (settings.s_standby_i) {
           graphics_context_set_fill_color(ctx, GColorBlack);
     } else {
@@ -327,12 +339,11 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     // Day name
     int w_day = tick_time->tm_wday;
-/*
-   if (!settings.s_ru_d) {
-        w_day += 7;
+    if (settings.s_ru_lang) {
+        draw_picture(ctx, &bmp_days, GRect(1, 75, 39, 37), w_day);
+    } else {
+        draw_picture(ctx, &bmp_days_en, GRect(1, 75, 39, 37), w_day);
     }
-*/
-    draw_picture(ctx, &bmp_days, GRect(1, 75, 39, 37), w_day);
 
     // Month
     if (settings.s_ru_lang) {

@@ -10,6 +10,16 @@
     "resources": {
         "media": [
             {
+                "file": "images/days_en.png",
+                "name": "DAYS_EN",
+                "type": "png"
+            },
+            {
+                "file": "images/days.png",
+                "name": "DAYS",
+                "type": "png"
+            },
+            {
                 "file": "images/months_en.png",
                 "name": "MONTHS_EN",
                 "type": "png"
@@ -32,11 +42,6 @@
             {
                 "file": "images/battery.png",
                 "name": "BATTERY",
-                "type": "png"
-            },
-            {
-                "file": "images/days.png",
-                "name": "DAYS",
                 "type": "png"
             },
             {
