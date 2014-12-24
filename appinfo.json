@@ -1,5 +1,18 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "ICON_BATTERY": 12,
+        "ICON_BT": 11,
+        "S_AUTO": 10,
+        "S_INFO_I": 8,
+        "S_RU_LANG": 9,
+        "S_STANDBY_I": 7,
+        "VIBE_BT": 5,
+        "VIBE_HOURLY": 6,
+        "W_CITY": 4,
+        "W_ICON": 3,
+        "W_KEY": 1,
+        "W_TEMP": 2
+    },
     "capabilities": [
         "location",
         "configurable"
@@ -9,6 +22,31 @@
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "file": "images/battery.png",
+                "name": "BATTERY",
+                "type": "png"
+            },
+            {
+                "file": "images/days-background.png",
+                "name": "BACKGROUND",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_bg.png",
+                "name": "WEATHER_BG",
+                "type": "png"
+            },
+            {
+                "file": "images/weather1.png",
+                "name": "WEATHER",
+                "type": "png"
+            },
+            {
+                "file": "images/digits_date.png",
+                "name": "DIGITS_DATE",
+                "type": "png"
+            },
             {
                 "file": "images/days_en.png",
                 "name": "DAYS_EN",
@@ -40,23 +78,8 @@
                 "type": "png"
             },
             {
-                "file": "images/battery.png",
-                "name": "BATTERY",
-                "type": "png"
-            },
-            {
-                "file": "images/digits_date.png",
-                "name": "DIGITS_DATE",
-                "type": "png"
-            },
-            {
                 "file": "images/digits_clock.png",
                 "name": "DIGITS_CLOCK",
-                "type": "png"
-            },
-            {
-                "file": "images/days-background.png",
-                "name": "BACKGROUND",
                 "type": "png"
             },
             {

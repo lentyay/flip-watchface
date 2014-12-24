@@ -10,6 +10,8 @@
 #define S_INFO_I 8
 #define S_RU_LANG 9
 #define S_AUTO 10
+#define ICON_BT 11
+#define ICON_BATTERY 12
 
 #define STORAGE_KEY 99
 
@@ -21,16 +23,20 @@ typedef struct persist {
     bool s_info_i;
     bool s_ru_lang;
     bool s_auto;
+    bool icon_bt;
+    bool icon_battery;
 } __attribute__((__packed__)) persist;
 
 persist settings = {
-    .w_key = 601339,
+    .w_key = 588409,
     .vibe_bt = true,
     .vibe_hourly = false,
     .s_standby_i = false,
     .s_info_i = false,
-    .s_ru_lang = false,
-    .s_auto = true
+    .s_ru_lang = true,
+    .s_auto = true,
+    .icon_bt = true,
+    .icon_battery = true
 };
 
 static Window *window;
@@ -46,8 +52,8 @@ static GBitmap *bmp_months_en;
 static GBitmap *bmp_battery;
 static GBitmap *bmp_bluetooth;
 static GBitmap *bmp_ampm;
-
-
+static GBitmap *bmp_weather;
+static GBitmap *bmp_weather_bg;
 
 
 static Layer *standby_layer;
@@ -89,6 +95,8 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     Tuple *s_info_i_tuple = dict_find(received, S_INFO_I);
     Tuple *s_ru_lang_tuple = dict_find(received, S_RU_LANG);
     Tuple *s_auto_tuple = dict_find(received, S_AUTO);
+    Tuple *icon_bt_tuple = dict_find(received, ICON_BT);
+    Tuple *icon_battery_tuple = dict_find(received, ICON_BATTERY);
 
     if (key_tuple) {
         settings.w_key = key_tuple->value->int32;
@@ -120,6 +128,12 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     if (s_auto_tuple) {
         settings.s_auto = (bool)s_auto_tuple->value->int16;
     };
+    if (icon_bt_tuple) {
+        settings.icon_bt = (bool)icon_bt_tuple->value->int16;
+    };
+    if (icon_battery_tuple) {
+        settings.icon_battery = (bool)icon_battery_tuple->value->int16;
+    };
 }
 
 static void app_message_init() {
@@ -143,6 +157,8 @@ static void load_resources() {
     bmp_battery = gbitmap_create_with_resource(RESOURCE_ID_BATTERY);
     bmp_bluetooth = gbitmap_create_with_resource(RESOURCE_ID_BLUETOOTH);
     bmp_ampm = gbitmap_create_with_resource(RESOURCE_ID_AMPM);
+    bmp_weather = gbitmap_create_with_resource(RESOURCE_ID_WEATHER);
+    bmp_weather_bg = gbitmap_create_with_resource(RESOURCE_ID_WEATHER_BG);
 }
 
 static void destroy_resources() {
@@ -157,6 +173,8 @@ static void destroy_resources() {
     gbitmap_destroy(bmp_battery);
     gbitmap_destroy(bmp_bluetooth);
     gbitmap_destroy(bmp_ampm);
+    gbitmap_destroy(bmp_weather);
+    gbitmap_destroy(bmp_weather_bg);
 }
 
 static void draw_picture(GContext* ctx, GBitmap **sources, GRect bounces,
@@ -174,8 +192,6 @@ static void timer_callback() {
 }
 
 static void update_standby(Layer *layer, GContext* ctx) {
-//    int ampm = 0;
-
     GRect bounds = layer_get_bounds(layer);
 
     if (settings.s_standby_i) {
@@ -273,7 +289,9 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     // Заливаем слой
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
+    //draw_picture(ctx, &bmp_weather_bg, GRect(11, 125, 124, 43), 0);
     draw_picture(ctx, &bmp_background, GRect(41, 78, 62, 47), 0);
+//    graphics_draw_circle(ctx, GPoint(72, 93), 30);
   
     time_t temp = time(NULL);
     struct tm *tick_time = localtime(&temp);
@@ -334,8 +352,8 @@ static void update_info(Layer *layer, GContext* ctx) {
     // Day number
     int day_dicker = tick_time->tm_mday/10;
     int day_unit = tick_time->tm_mday%10;
-    draw_picture(ctx, &bmp_digits_date, GRect(53, 80, 18, 33), day_dicker);
-    draw_picture(ctx, &bmp_digits_date, GRect(73, 80, 18, 33), day_unit);
+    draw_picture(ctx, &bmp_digits_date, GRect(54, 81, 17, 31), day_dicker);
+    draw_picture(ctx, &bmp_digits_date, GRect(74, 81, 17, 31), day_unit);
 
     // Day name
     int w_day = tick_time->tm_wday;
@@ -356,60 +374,22 @@ static void update_info(Layer *layer, GContext* ctx) {
  
   
     // Батарейка
-    BatteryChargeState charge_state = battery_state_service_peek();
-    int bat_percent = charge_state.charge_percent/10;
-    if (charge_state.is_charging) {
-        bat_percent = 110/10;
+    if (settings.icon_battery) {
+        BatteryChargeState charge_state = battery_state_service_peek();
+        int bat_percent = charge_state.charge_percent/10;
+        if (charge_state.is_charging) {
+            bat_percent = 110/10;
+        };
+        draw_picture(ctx, &bmp_battery, GRect(119, 4, 17, 7), bat_percent);
+        draw_picture(ctx, &bmp_bluetooth, GRect(136, 3, 18, 9), 0);
     };
-    draw_picture(ctx, &bmp_battery, GRect(119, 3, 25, 7), bat_percent);
-
+      
     // bluetooth
-    if (bluetooth_connection_service_peek()) {
-        draw_picture(ctx, &bmp_bluetooth, GRect(0, 3, 18, 9), 0);
+    if (settings.icon_bt) {
+        if (bluetooth_connection_service_peek()) {
+            draw_picture(ctx, &bmp_bluetooth, GRect(0, 3, 18, 9), 0);
+        };
     };
-
-/*  
-
-    int mon_dicker = (tick_time->tm_mon+1)/10;
-    int mon_unit = (tick_time->tm_mon+1)%10;
-    int year_dicker = (tick_time->tm_year-100)/10;
-    int year_unit = (tick_time->tm_year-100)%10;
-
-    int y_day = tick_time->tm_yday + 1;
-    int y_day_cent = y_day/100;
-    int y_day_dicker = (y_day%100)/10;
-    int y_day_unit = (y_day%100)%10;
-
-
-    draw_picture(ctx, &bmp_digits_midi, GRect(34, 90, 8, 16), mon_dicker);
-    draw_picture(ctx, &bmp_digits_midi, GRect(44, 90, 8, 16), mon_unit);
-
-    draw_picture(ctx, &bmp_digits_midi, GRect(62, 90, 8, 16), year_dicker);
-    draw_picture(ctx, &bmp_digits_midi, GRect(72, 90, 8, 16), year_unit);
-
-    GRect frame = (GRect) {
-        .origin = GPoint(28, 98),
-        .size = GSize(4, 2)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(56, 98),
-        .size = GSize(4, 2)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-
-    frame = (GRect) {
-        .origin = GPoint(86, 90),
-        .size = GSize(18, 16)
-    };
-    graphics_fill_rect(ctx, frame, 4, GCornersAll);
-
-    draw_picture(ctx, &bmp_digits_midi, GRect(108, 90, 8, 16), y_day_cent);
-    draw_picture(ctx, &bmp_digits_midi, GRect(118, 90, 8, 16), y_day_dicker);
-    draw_picture(ctx, &bmp_digits_midi, GRect(128, 90, 8, 16), y_day_unit);
-
-    // Разделитель
-    graphics_draw_line(ctx, GPoint(24, 84), GPoint(120, 84));
 
     // Погода
     int x;
@@ -419,23 +399,11 @@ static void update_info(Layer *layer, GContext* ctx) {
         graphics_draw_text(ctx,
                            cond_city,
                            fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-                           GRect(5, 5, 144, 18 + 2),
+                           GRect(45, 147, 144, 18 + 2),
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
         );
-
-        // Десятки температуры
-        if (abs(cond_t)/10 > 0) {
-            draw_picture(ctx, &bmp_digits, GRect(78, 35, 20, 38),
-                         abs(cond_t)/10);
-        };
-        // Единицы температуры
-        draw_picture(ctx, &bmp_digits, GRect(100, 35, 20, 38),
-                     abs(cond_t)%10);
-
-        // Значок градус
-        graphics_draw_circle(ctx, GPoint(124, 40), 2);
 
         if (cond_t < 0) {
             if (abs(cond_t)/10 > 0) {
@@ -449,9 +417,9 @@ static void update_info(Layer *layer, GContext* ctx) {
             };
             graphics_fill_rect(ctx, frame, 0, GCornerNone);
         };
-        draw_picture(ctx, &bmp_weather, GRect(21, 42, 32, 32), cond_icon);
+        draw_picture(ctx, &bmp_weather, GRect(32, 129, 81, 31), cond_icon);
+
     };
-*/    
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
