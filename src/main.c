@@ -229,8 +229,8 @@ static void update_standby(Layer *layer, GContext* ctx) {
     // Minutes
     int min_dicker = tick_time->tm_min/10;
     int min_unit = tick_time->tm_min%10;
-    draw_picture(ctx, &bmp_digits_clock, GRect(77, 61, 29, 43), min_dicker);
-    draw_picture(ctx, &bmp_digits_clock, GRect(109, 61, 29, 43), min_unit);
+    draw_picture(ctx, &bmp_digits_clock, GRect(78, 61, 29, 43), min_dicker);
+    draw_picture(ctx, &bmp_digits_clock, GRect(110, 61, 29, 43), min_unit);
 
     // Hours
     int hour_dicker = tick_time->tm_hour/10;
@@ -249,13 +249,13 @@ static void update_standby(Layer *layer, GContext* ctx) {
           graphics_context_set_fill_color(ctx, GColorWhite);
     };
     GRect frame = (GRect) {
-        .origin = GPoint(bounds.size.w/2-2, 74),
-        .size = GSize(4, 4)
+        .origin = GPoint(70, 74),
+        .size = GSize(5, 5)
     };
     graphics_fill_rect(ctx, frame, 0, GCornerNone);
     frame = (GRect) {
-        .origin = GPoint(bounds.size.w/2-2, 86),
-        .size = GSize(4, 4)
+        .origin = GPoint(70, 86),
+        .size = GSize(5, 5)
     };
     graphics_fill_rect(ctx, frame, 0, GCornerNone);
 
@@ -289,9 +289,8 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     // Заливаем слой
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-    //draw_picture(ctx, &bmp_weather_bg, GRect(11, 125, 124, 43), 0);
-    draw_picture(ctx, &bmp_background, GRect(41, 78, 62, 47), 0);
-//    graphics_draw_circle(ctx, GPoint(72, 93), 30);
+    draw_picture(ctx, &bmp_background, GRect(51, 60, 43, 13), 0);
+    graphics_draw_circle(ctx, GPoint(72, 88), 30);
   
     time_t temp = time(NULL);
     struct tm *tick_time = localtime(&temp);
@@ -313,47 +312,86 @@ static void update_info(Layer *layer, GContext* ctx) {
     };
 
     // Seconds
-    draw_picture(ctx, &bmp_seconds, GRect(45, 62, 54, 16), tick_time->tm_sec);
+    draw_picture(ctx, &bmp_seconds, GRect(54, 61, 37, 10), tick_time->tm_sec);
   
     // Minutes
     int min_dicker = tick_time->tm_min/10;
     int min_unit = tick_time->tm_min%10;
-    draw_picture(ctx, &bmp_digits_clock, GRect(77, 15, 29, 43), min_dicker);
-    draw_picture(ctx, &bmp_digits_clock, GRect(109, 15, 29, 43), min_unit);
+    draw_picture(ctx, &bmp_digits_clock, GRect(78, 13, 29, 43), min_dicker);
+    draw_picture(ctx, &bmp_digits_clock, GRect(110, 13, 29, 43), min_unit);
   
     // Hours
     int hour_dicker = tick_time->tm_hour/10;
     int hour_unit = tick_time->tm_hour%10;
     if (hour_dicker) {
-        draw_picture(ctx, &bmp_digits_clock, GRect(5, 15, 29, 43), hour_dicker);
+        draw_picture(ctx, &bmp_digits_clock, GRect(5, 13, 29, 43), hour_dicker);
     } else {
-        draw_picture(ctx, &bmp_digits_clock, GRect(5, 15, 29, 43), 0);
+        draw_picture(ctx, &bmp_digits_clock, GRect(5, 13, 29, 43), 0);
     };
-    draw_picture(ctx, &bmp_digits_clock, GRect(38, 15, 29, 43), hour_unit);
+    draw_picture(ctx, &bmp_digits_clock, GRect(38, 13, 29, 43), hour_unit);
   
   // Рисуем разделитель
-    if (settings.s_standby_i) {
+    if (settings.s_info_i) {
           graphics_context_set_fill_color(ctx, GColorBlack);
     } else {
           graphics_context_set_fill_color(ctx, GColorWhite);
     };
     GRect frame = (GRect) {
-        .origin = GPoint(bounds.size.w/2-2, 28),
-        .size = GSize(4, 4)
+        .origin = GPoint(70, 26),
+        .size = GSize(5, 5)
     };
     graphics_fill_rect(ctx, frame, 0, GCornerNone);
     frame = (GRect) {
-        .origin = GPoint(bounds.size.w/2-2, 40),
-        .size = GSize(4, 4)
+        .origin = GPoint(70, 38),
+        .size = GSize(5, 5)
     };
     graphics_fill_rect(ctx, frame, 0, GCornerNone);
+
+    // Weather background lines
+    frame = (GRect) {
+        .origin = GPoint(17, 149),
+        .size = GSize(112, 1)
+    };
+    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    frame = (GRect) {
+        .origin = GPoint(16, 152),
+        .size = GSize(114, 1)
+    };
+    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    frame = (GRect) {
+        .origin = GPoint(15, 155),
+        .size = GSize(116, 1)
+    };
+    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    frame = (GRect) {
+        .origin = GPoint(14, 158),
+        .size = GSize(118, 1)
+    };
+    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    frame = (GRect) {
+        .origin = GPoint(13, 161),
+        .size = GSize(120, 1)
+    };
+    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    frame = (GRect) {
+        .origin = GPoint(12, 164),
+        .size = GSize(122, 1)
+    };
+    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    frame = (GRect) {
+        .origin = GPoint(11, 167),
+        .size = GSize(124, 1)
+    };
+    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+  
+  
   
   // Дата
     // Day number
     int day_dicker = tick_time->tm_mday/10;
     int day_unit = tick_time->tm_mday%10;
-    draw_picture(ctx, &bmp_digits_date, GRect(54, 81, 17, 31), day_dicker);
-    draw_picture(ctx, &bmp_digits_date, GRect(74, 81, 17, 31), day_unit);
+    draw_picture(ctx, &bmp_digits_date, GRect(54, 75, 17, 31), day_dicker);
+    draw_picture(ctx, &bmp_digits_date, GRect(74, 75, 17, 31), day_unit);
 
     // Day name
     int w_day = tick_time->tm_wday;
@@ -365,9 +403,9 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     // Month
     if (settings.s_ru_lang) {
-        draw_picture(ctx, &bmp_months, GRect(104, 75, 39, 37), tick_time->tm_mon);
+        draw_picture(ctx, &bmp_months, GRect(105, 75, 39, 37), tick_time->tm_mon);
     } else {
-        draw_picture(ctx, &bmp_months_en, GRect(104, 75, 39, 37), tick_time->tm_mon);
+        draw_picture(ctx, &bmp_months_en, GRect(105, 75, 39, 37), tick_time->tm_mon);
     }
   
   
@@ -380,26 +418,36 @@ static void update_info(Layer *layer, GContext* ctx) {
         if (charge_state.is_charging) {
             bat_percent = 110/10;
         };
-        draw_picture(ctx, &bmp_battery, GRect(119, 4, 17, 7), bat_percent);
-        draw_picture(ctx, &bmp_bluetooth, GRect(136, 3, 18, 9), 0);
+        draw_picture(ctx, &bmp_battery, GRect(119, 3, 17, 7), bat_percent);
+        draw_picture(ctx, &bmp_bluetooth, GRect(136, 2, 18, 9), 0);
     };
       
     // bluetooth
     if (settings.icon_bt) {
         if (bluetooth_connection_service_peek()) {
-            draw_picture(ctx, &bmp_bluetooth, GRect(0, 3, 18, 9), 0);
+            draw_picture(ctx, &bmp_bluetooth, GRect(0, 2, 18, 9), 0);
         };
     };
 
     // Погода
-    int x;
+    draw_picture(ctx, &bmp_weather_bg, GRect(29, 122, 87, 46), 0);
+    if (settings.s_info_i) {
+          graphics_context_set_fill_color(ctx, GColorBlack);
+    } else {
+          graphics_context_set_fill_color(ctx, GColorWhite);
+    };
 
+    int x;
     if (cond_t < 99) {
+        draw_picture(ctx, &bmp_weather, GRect(32, 126, 81, 31), cond_icon);
         // Город
+        char message[80];
+        strcat(message, cond_city);
+        strcat(message, " ");
         graphics_draw_text(ctx,
                            cond_city,
-                           fonts_get_system_font(FONT_KEY_GOTHIC_18_BOLD),
-                           GRect(45, 147, 144, 18 + 2),
+                           fonts_get_system_font(FONT_KEY_GOTHIC_14),
+                           GRect(33, 150, 79, 14 + 2),
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
@@ -417,7 +465,6 @@ static void update_info(Layer *layer, GContext* ctx) {
             };
             graphics_fill_rect(ctx, frame, 0, GCornerNone);
         };
-        draw_picture(ctx, &bmp_weather, GRect(32, 129, 81, 31), cond_icon);
 
     };
 }

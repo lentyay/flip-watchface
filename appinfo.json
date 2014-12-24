@@ -23,23 +23,28 @@
     "resources": {
         "media": [
             {
-                "file": "images/battery.png",
-                "name": "BATTERY",
-                "type": "png"
-            },
-            {
-                "file": "images/days-background.png",
-                "name": "BACKGROUND",
-                "type": "png"
-            },
-            {
                 "file": "images/weather_bg.png",
                 "name": "WEATHER_BG",
                 "type": "png"
             },
             {
-                "file": "images/weather1.png",
+                "file": "images/weather.png",
                 "name": "WEATHER",
+                "type": "png"
+            },
+            {
+                "file": "images/seconds.png",
+                "name": "SECONDS",
+                "type": "png"
+            },
+            {
+                "file": "images/background.png",
+                "name": "BACKGROUND",
+                "type": "png"
+            },
+            {
+                "file": "images/battery.png",
+                "name": "BATTERY",
                 "type": "png"
             },
             {
@@ -80,11 +85,6 @@
             {
                 "file": "images/digits_clock.png",
                 "name": "DIGITS_CLOCK",
-                "type": "png"
-            },
-            {
-                "file": "images/seconds.png",
-                "name": "SECONDS",
                 "type": "png"
             },
             {
