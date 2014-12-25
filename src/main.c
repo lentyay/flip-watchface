@@ -277,12 +277,14 @@ static void update_info(Layer *layer, GContext* ctx) {
         // Цвет фона - белый
         graphics_context_set_fill_color(ctx, GColorWhite);
         graphics_context_set_stroke_color(ctx, GColorBlack);
+        graphics_context_set_text_color(ctx, GColorWhite);
         // Режим композитинга - инвернтный
         graphics_context_set_compositing_mode(ctx, GCompOpAssignInverted);
     } else {
         // Цвет фона - черный
         graphics_context_set_fill_color(ctx, GColorBlack);
         graphics_context_set_stroke_color(ctx, GColorWhite);
+        graphics_context_set_text_color(ctx, GColorBlack);
         // Режим композитинга - нормальный
         graphics_context_set_compositing_mode(ctx, GCompOpAssign);
     };
@@ -431,11 +433,6 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     // Погода
     draw_picture(ctx, &bmp_weather_bg, GRect(29, 122, 87, 46), 0);
-    if (settings.s_info_i) {
-          graphics_context_set_fill_color(ctx, GColorBlack);
-    } else {
-          graphics_context_set_fill_color(ctx, GColorWhite);
-    };
 
     int x;
     if (cond_t < 99) {
@@ -445,14 +442,14 @@ static void update_info(Layer *layer, GContext* ctx) {
         strcat(message, cond_city);
         strcat(message, " ");
         graphics_draw_text(ctx,
-                           cond_city,
+                           message,
                            fonts_get_system_font(FONT_KEY_GOTHIC_14),
                            GRect(33, 150, 79, 14 + 2),
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
         );
-
+/*      
         if (cond_t < 0) {
             if (abs(cond_t)/10 > 0) {
                 x = 66;
@@ -466,6 +463,7 @@ static void update_info(Layer *layer, GContext* ctx) {
             graphics_fill_rect(ctx, frame, 0, GCornerNone);
         };
 
+*/
     };
 }
 
