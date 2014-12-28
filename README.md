@@ -1,5 +1,5 @@
 # Flip Clock Pebble watchface
-===========================
+
 Double screen watchface with a little bit of Steampunk flavour, inspired by retro flip clock. Watchface is fully ajustable.
 
 <img src="http://pebble.newkamikaze.com/img/preview1.png"> <img src="http://pebble.newkamikaze.com/img/preview2.png">
