@@ -434,36 +434,23 @@ static void update_info(Layer *layer, GContext* ctx) {
     // Погода
     draw_picture(ctx, &bmp_weather_bg, GRect(29, 122, 87, 46), 0);
 
-    int x;
     if (cond_t < 99) {
         draw_picture(ctx, &bmp_weather, GRect(32, 126, 81, 31), cond_icon);
         // Город
-        char message[80];
-        strcat(message, cond_city);
-        strcat(message, " ");
+        char message[80] = " ";
+        if (strlen(cond_city) <= 8) {
+          snprintf(message, sizeof(message), "%s %d", cond_city, cond_t);
+        } else {
+          snprintf(message, sizeof(message), "%d", cond_t);
+        }
         graphics_draw_text(ctx,
                            message,
-                           fonts_get_system_font(FONT_KEY_GOTHIC_14),
-                           GRect(33, 150, 79, 14 + 2),
+                           fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),
+                           GRect(23, 152, 99, 16),
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
         );
-/*      
-        if (cond_t < 0) {
-            if (abs(cond_t)/10 > 0) {
-                x = 66;
-            } else {
-                x = 86;
-            };
-            GRect frame = (GRect) {
-                .origin = GPoint(x, 52),
-                .size = GSize(8, 2)
-            };
-            graphics_fill_rect(ctx, frame, 0, GCornerNone);
-        };
-
-*/
     };
 }
 

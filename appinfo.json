@@ -14,11 +14,10 @@
         "W_TEMP": 2
     },
     "capabilities": [
-        "location",
         "configurable"
     ],
     "companyName": "newKAMiKAZE",
-    "longName": "Flip watchface",
+    "longName": "Flip Clock",
     "projectType": "native",
     "resources": {
         "media": [
@@ -85,12 +84,6 @@
             {
                 "file": "images/digits_clock.png",
                 "name": "DIGITS_CLOCK",
-                "type": "png"
-            },
-            {
-                "file": "images/preview.png",
-                "menuIcon": true,
-                "name": "PREVIEW",
                 "type": "png"
             }
         ]
