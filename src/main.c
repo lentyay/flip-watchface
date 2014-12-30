@@ -220,7 +220,7 @@ static void update_standby(Layer *layer, GContext* ctx) {
         } else {
             ampm = 0;
         };
-        draw_picture(ctx, &bmp_ampm, GRect(62, 108, 20, 12), ampm);
+        draw_picture(ctx, &bmp_ampm, GRect(62, 108, 21, 11), ampm);
 
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
@@ -236,9 +236,9 @@ static void update_standby(Layer *layer, GContext* ctx) {
     int hour_dicker = tick_time->tm_hour/10;
     int hour_unit = tick_time->tm_hour%10;
     if (hour_dicker) {
-        draw_picture(ctx, &bmp_digits_clock, GRect(5, 61, 29, 43), hour_dicker);
+        draw_picture(ctx, &bmp_digits_clock, GRect(6, 61, 29, 43), hour_dicker);
     } else {
-        draw_picture(ctx, &bmp_digits_clock, GRect(5, 61, 29, 43), 0);
+        draw_picture(ctx, &bmp_digits_clock, GRect(6, 61, 29, 43), 0);
     };
     draw_picture(ctx, &bmp_digits_clock, GRect(38, 61, 29, 43), hour_unit);
   
@@ -307,7 +307,7 @@ static void update_info(Layer *layer, GContext* ctx) {
         } else {
             ampm = 0;
         };
-        draw_picture(ctx, &bmp_ampm, GRect(62, 0, 20, 12), ampm);
+        draw_picture(ctx, &bmp_ampm, GRect(62, 0, 21, 11), ampm);
         
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
@@ -326,9 +326,9 @@ static void update_info(Layer *layer, GContext* ctx) {
     int hour_dicker = tick_time->tm_hour/10;
     int hour_unit = tick_time->tm_hour%10;
     if (hour_dicker) {
-        draw_picture(ctx, &bmp_digits_clock, GRect(5, 13, 29, 43), hour_dicker);
+        draw_picture(ctx, &bmp_digits_clock, GRect(6, 13, 29, 43), hour_dicker);
     } else {
-        draw_picture(ctx, &bmp_digits_clock, GRect(5, 13, 29, 43), 0);
+        draw_picture(ctx, &bmp_digits_clock, GRect(6, 13, 29, 43), 0);
     };
     draw_picture(ctx, &bmp_digits_clock, GRect(38, 13, 29, 43), hour_unit);
   
