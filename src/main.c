@@ -34,27 +34,14 @@ persist settings = {
     .s_standby_i = false,
     .s_info_i = false,
     .s_ru_lang = true,
-    .s_auto = true,
+    .s_auto = false,
     .icon_bt = true,
     .icon_battery = true
 };
 
 static Window *window;
 
-static GBitmap *bmp_digits_clock;
-static GBitmap *bmp_digits_date;
-static GBitmap *bmp_seconds;
-static GBitmap *bmp_background;
-static GBitmap *bmp_days;
-static GBitmap *bmp_days_en;
-static GBitmap *bmp_months;
-static GBitmap *bmp_months_en;
-static GBitmap *bmp_battery;
-static GBitmap *bmp_bluetooth;
-static GBitmap *bmp_ampm;
-static GBitmap *bmp_weather;
-static GBitmap *bmp_weather_bg;
-
+static GBitmap *bitmap[13];
 
 static Layer *standby_layer;
 static Layer *info_layer;
@@ -146,35 +133,16 @@ static void app_message_init() {
 }
 
 static void load_resources() {
-    bmp_digits_clock = gbitmap_create_with_resource(RESOURCE_ID_DIGITS_CLOCK);
-    bmp_digits_date = gbitmap_create_with_resource(RESOURCE_ID_DIGITS_DATE);
-    bmp_seconds = gbitmap_create_with_resource(RESOURCE_ID_SECONDS);
-    bmp_background = gbitmap_create_with_resource(RESOURCE_ID_BACKGROUND);
-    bmp_days = gbitmap_create_with_resource(RESOURCE_ID_DAYS);
-    bmp_days_en = gbitmap_create_with_resource(RESOURCE_ID_DAYS_EN);
-    bmp_months = gbitmap_create_with_resource(RESOURCE_ID_MONTHS);
-    bmp_months_en = gbitmap_create_with_resource(RESOURCE_ID_MONTHS_EN);
-    bmp_battery = gbitmap_create_with_resource(RESOURCE_ID_BATTERY);
-    bmp_bluetooth = gbitmap_create_with_resource(RESOURCE_ID_BLUETOOTH);
-    bmp_ampm = gbitmap_create_with_resource(RESOURCE_ID_AMPM);
-    bmp_weather = gbitmap_create_with_resource(RESOURCE_ID_WEATHER);
-    bmp_weather_bg = gbitmap_create_with_resource(RESOURCE_ID_WEATHER_BG);
+    unsigned char RESOURCE[13] = {RESOURCE_ID_DIGITS_CLOCK, RESOURCE_ID_DIGITS_DATE, RESOURCE_ID_SECONDS, RESOURCE_ID_BACKGROUND, RESOURCE_ID_DAYS, RESOURCE_ID_DAYS_EN, RESOURCE_ID_MONTHS, RESOURCE_ID_MONTHS_EN, RESOURCE_ID_BATTERY, RESOURCE_ID_BLUETOOTH, RESOURCE_ID_AMPM, RESOURCE_ID_WEATHER, RESOURCE_ID_WEATHER_BG};
+    for (int i=0; i<13; ++i) {
+        bitmap[i] = gbitmap_create_with_resource(RESOURCE[i] );
+    }  
 }
 
 static void destroy_resources() {
-    gbitmap_destroy(bmp_digits_clock);
-    gbitmap_destroy(bmp_digits_date);
-    gbitmap_destroy(bmp_seconds);
-    gbitmap_destroy(bmp_background);
-    gbitmap_destroy(bmp_days);
-    gbitmap_destroy(bmp_days_en);
-    gbitmap_destroy(bmp_months);
-    gbitmap_destroy(bmp_months_en);
-    gbitmap_destroy(bmp_battery);
-    gbitmap_destroy(bmp_bluetooth);
-    gbitmap_destroy(bmp_ampm);
-    gbitmap_destroy(bmp_weather);
-    gbitmap_destroy(bmp_weather_bg);
+    for (int i=0; i<13; ++i) {
+        gbitmap_destroy(bitmap[i]);
+    }  
 }
 
 static void draw_picture(GContext* ctx, GBitmap **sources, GRect bounces,
@@ -188,7 +156,7 @@ static void draw_picture(GContext* ctx, GBitmap **sources, GRect bounces,
 }
 
 static void timer_callback() {
-  current_screen = 0;
+    current_screen = 0;
 }
 
 static void update_standby(Layer *layer, GContext* ctx) {
@@ -220,7 +188,7 @@ static void update_standby(Layer *layer, GContext* ctx) {
         } else {
             ampm = 0;
         };
-        draw_picture(ctx, &bmp_ampm, GRect(62, 108, 21, 11), ampm);
+        draw_picture(ctx, &bitmap[10], GRect(62, 108, 21, 11), ampm);
 
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
@@ -229,18 +197,18 @@ static void update_standby(Layer *layer, GContext* ctx) {
     // Minutes
     int min_dicker = tick_time->tm_min/10;
     int min_unit = tick_time->tm_min%10;
-    draw_picture(ctx, &bmp_digits_clock, GRect(78, 61, 29, 43), min_dicker);
-    draw_picture(ctx, &bmp_digits_clock, GRect(110, 61, 29, 43), min_unit);
-
+    draw_picture(ctx, &bitmap[0], GRect(78, 61, 29, 43), min_dicker);
+    draw_picture(ctx, &bitmap[0], GRect(110, 61, 29, 43), min_unit);
+  
     // Hours
     int hour_dicker = tick_time->tm_hour/10;
     int hour_unit = tick_time->tm_hour%10;
     if (hour_dicker) {
-        draw_picture(ctx, &bmp_digits_clock, GRect(6, 61, 29, 43), hour_dicker);
+        draw_picture(ctx, &bitmap[0], GRect(6, 61, 29, 43), hour_dicker);
     } else {
-        draw_picture(ctx, &bmp_digits_clock, GRect(6, 61, 29, 43), 0);
+        draw_picture(ctx, &bitmap[0], GRect(6, 61, 29, 43), 0);
     };
-    draw_picture(ctx, &bmp_digits_clock, GRect(38, 61, 29, 43), hour_unit);
+    draw_picture(ctx, &bitmap[0], GRect(38, 61, 29, 43), hour_unit);
   
   // Рисуем разделитель
     if (settings.s_standby_i) {
@@ -270,7 +238,7 @@ static void update_standby(Layer *layer, GContext* ctx) {
 }
 
 static void update_info(Layer *layer, GContext* ctx) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Info redraw");
+    //APP_LOG(APP_LOG_LEVEL_DEBUG, "Info redraw");
     GRect bounds = layer_get_bounds(layer);
 
     if (settings.s_info_i) {
@@ -291,7 +259,7 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     // Заливаем слой
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-    draw_picture(ctx, &bmp_background, GRect(51, 60, 43, 13), 0);
+    draw_picture(ctx, &bitmap[3], GRect(51, 60, 43, 13), 0);
     graphics_draw_circle(ctx, GPoint(72, 88), 30);
   
     time_t temp = time(NULL);
@@ -307,30 +275,30 @@ static void update_info(Layer *layer, GContext* ctx) {
         } else {
             ampm = 0;
         };
-        draw_picture(ctx, &bmp_ampm, GRect(62, 0, 21, 11), ampm);
+        draw_picture(ctx, &bitmap[10], GRect(62, 0, 21, 11), ampm);
         
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
     };
 
     // Seconds
-    draw_picture(ctx, &bmp_seconds, GRect(54, 61, 37, 10), tick_time->tm_sec);
+    draw_picture(ctx, &bitmap[2], GRect(54, 61, 37, 10), tick_time->tm_sec);
   
     // Minutes
     int min_dicker = tick_time->tm_min/10;
     int min_unit = tick_time->tm_min%10;
-    draw_picture(ctx, &bmp_digits_clock, GRect(78, 13, 29, 43), min_dicker);
-    draw_picture(ctx, &bmp_digits_clock, GRect(110, 13, 29, 43), min_unit);
+    draw_picture(ctx, &bitmap[0], GRect(78, 13, 29, 43), min_dicker);
+    draw_picture(ctx, &bitmap[0], GRect(110, 13, 29, 43), min_unit);
   
     // Hours
     int hour_dicker = tick_time->tm_hour/10;
     int hour_unit = tick_time->tm_hour%10;
     if (hour_dicker) {
-        draw_picture(ctx, &bmp_digits_clock, GRect(6, 13, 29, 43), hour_dicker);
+        draw_picture(ctx, &bitmap[0], GRect(6, 13, 29, 43), hour_dicker);
     } else {
-        draw_picture(ctx, &bmp_digits_clock, GRect(6, 13, 29, 43), 0);
+        draw_picture(ctx, &bitmap[0], GRect(6, 13, 29, 43), 0);
     };
-    draw_picture(ctx, &bmp_digits_clock, GRect(38, 13, 29, 43), hour_unit);
+    draw_picture(ctx, &bitmap[0], GRect(38, 13, 29, 43), hour_unit);
   
   // Рисуем разделитель
     if (settings.s_info_i) {
@@ -392,24 +360,24 @@ static void update_info(Layer *layer, GContext* ctx) {
     // Day number
     int day_dicker = tick_time->tm_mday/10;
     int day_unit = tick_time->tm_mday%10;
-    draw_picture(ctx, &bmp_digits_date, GRect(54, 75, 17, 31), day_dicker);
-    draw_picture(ctx, &bmp_digits_date, GRect(74, 75, 17, 31), day_unit);
+    draw_picture(ctx, &bitmap[1], GRect(54, 75, 17, 31), day_dicker);
+    draw_picture(ctx, &bitmap[1], GRect(74, 75, 17, 31), day_unit);
 
     // Day name
     int w_day = tick_time->tm_wday;
     if (settings.s_ru_lang) {
-        draw_picture(ctx, &bmp_days, GRect(1, 75, 39, 37), w_day);
+        draw_picture(ctx, &bitmap[4], GRect(1, 75, 39, 37), w_day);
     } else {
-        draw_picture(ctx, &bmp_days_en, GRect(1, 75, 39, 37), w_day);
-    }
-
-    // Month
-    if (settings.s_ru_lang) {
-        draw_picture(ctx, &bmp_months, GRect(105, 75, 39, 37), tick_time->tm_mon);
-    } else {
-        draw_picture(ctx, &bmp_months_en, GRect(105, 75, 39, 37), tick_time->tm_mon);
+        draw_picture(ctx, &bitmap[5], GRect(1, 75, 39, 37), w_day);
     }
   
+  
+    // Month
+    if (settings.s_ru_lang) {
+        draw_picture(ctx, &bitmap[6], GRect(105, 75, 39, 37), tick_time->tm_mon);
+    } else {
+        draw_picture(ctx, &bitmap[7], GRect(105, 75, 39, 37), tick_time->tm_mon);
+    }
   
  
   
@@ -420,22 +388,22 @@ static void update_info(Layer *layer, GContext* ctx) {
         if (charge_state.is_charging) {
             bat_percent = 110/10;
         };
-        draw_picture(ctx, &bmp_battery, GRect(119, 3, 17, 7), bat_percent);
-        draw_picture(ctx, &bmp_bluetooth, GRect(136, 2, 18, 9), 0);
+        draw_picture(ctx, &bitmap[8], GRect(119, 3, 17, 7), bat_percent);
+        draw_picture(ctx, &bitmap[9], GRect(136, 2, 18, 9), 0);
     };
       
     // bluetooth
     if (settings.icon_bt) {
         if (bluetooth_connection_service_peek()) {
-            draw_picture(ctx, &bmp_bluetooth, GRect(0, 2, 18, 9), 0);
+            draw_picture(ctx, &bitmap[9], GRect(0, 2, 18, 9), 0);
         };
     };
 
     // Погода
-    draw_picture(ctx, &bmp_weather_bg, GRect(29, 122, 87, 46), 0);
+    draw_picture(ctx, &bitmap[12], GRect(29, 122, 87, 46), 0);
 
     if (cond_t < 99) {
-        draw_picture(ctx, &bmp_weather, GRect(32, 126, 81, 31), cond_icon);
+        draw_picture(ctx, &bitmap[11], GRect(32, 126, 81, 31), cond_icon);
         // Город
         char message[80] = " ";
         if (strlen(cond_city) <= 8) {
@@ -463,12 +431,9 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
             vibes_long_pulse();
         };
     };
-    //if (units_changed & SECOND_UNIT) {
-        //layer_mark_dirty(info_layer);
-    //};
+  if (settings.s_auto) {
     switch (current_screen) {
         case 0:
-            //layer_set_hidden(info_layer, true);
             if (layer_get_hidden(standby_layer)) {
                 layer_set_hidden(info_layer, true);
                 layer_set_hidden(standby_layer, false);
@@ -486,10 +451,18 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
             };
             break;
     };
+  } else {
+    layer_mark_dirty(info_layer);
+    layer_set_hidden(standby_layer, true);
+    layer_set_hidden(info_layer, false);
+    send_request();
+  }
 }
 
 static void tap_handler(AccelAxisType axis, int32_t direction) {
+  if (settings.s_auto) {
     current_screen = !current_screen;
+  }
 }
 
 void bt_handler(bool connected) {
@@ -504,6 +477,7 @@ static void window_load(Window *window) {
 
     load_resources();
 
+  if (settings.s_auto) {
     standby_layer = layer_create(bounds);
     layer_add_child(window_layer, standby_layer);
     layer_set_update_proc(standby_layer, update_standby);
@@ -511,6 +485,15 @@ static void window_load(Window *window) {
     layer_set_hidden(info_layer, true);
     layer_add_child(window_layer, info_layer);
     layer_set_update_proc(info_layer, update_info);
+  } else {
+    info_layer = layer_create(bounds);
+    layer_add_child(window_layer, info_layer);
+    layer_set_update_proc(info_layer, update_info);
+    standby_layer = layer_create(bounds);
+    layer_set_hidden(standby_layer, true);
+    layer_add_child(window_layer, standby_layer);
+    layer_set_update_proc(standby_layer, update_standby);
+  }
 }
 
 static void window_unload(Window *window) {
@@ -551,7 +534,7 @@ static void deinit(void) {
 int main(void) {
   init();
 
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
 
   app_event_loop();
   deinit();
