@@ -2,7 +2,7 @@
 
 Fully ajustable double screen watchface with a little bit of Steampunk flavour, inspired by retro flip clock. Code based on <b>tmnhy</b> <a href="https://bitbucket.org/tmnhy/7-segment-light/">7-segment watchface</a>.
 
-<img src="http://pebble.newkamikaze.com/img/preview1.png"> <img src="http://pebble.newkamikaze.com/img/preview2.png">
+<img src="http://pebble.newkamikaze.com/images/preview1.png"> <img src="http://pebble.newkamikaze.com/images/preview2.png">
 
 ## Features:
 - 2 languages: English and Russian
