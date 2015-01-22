@@ -91,7 +91,7 @@
     "shortName": "Flip watchface",
     "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
     "versionCode": 1,
-    "versionLabel": "1.0",
+    "versionLabel": "1.02",
     "watchapp": {
         "watchface": true
     }

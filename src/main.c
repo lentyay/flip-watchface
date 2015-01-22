@@ -60,6 +60,7 @@ static bool send_request() {
     if (iter == NULL) {
         APP_LOG(APP_LOG_LEVEL_DEBUG, "Iter is NULL.");
         return false;
+vibes_double_pulse();
     };
 
     Tuplet value0 = TupletInteger(W_KEY, settings.w_key);
@@ -68,6 +69,8 @@ static bool send_request() {
     dict_write_end(iter);
     app_message_outbox_send();
 
+vibes_short_pulse();
+ 
     return true;
 }
 
@@ -121,6 +124,8 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     if (icon_battery_tuple) {
         settings.icon_battery = (bool)icon_battery_tuple->value->int16;
     };
+    // Update weather after submit settings page
+    send_request();
 }
 
 static void app_message_init() {
@@ -427,6 +432,8 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
         layer_mark_dirty(standby_layer);
     };
     if (units_changed & HOUR_UNIT) {
+        // Update weather every hour
+        send_request();
         if (settings.vibe_hourly) {
             vibes_long_pulse();
         };
@@ -444,7 +451,10 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
             if (layer_get_hidden(info_layer)) {
                 layer_set_hidden(standby_layer, true);
                 layer_set_hidden(info_layer, false);
+
+                // Update weather on info screen activation
                 send_request();
+
                 if (settings.s_auto) {
                     standby_timer = app_timer_register(30000, timer_callback, NULL);
                 };
@@ -455,7 +465,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     layer_mark_dirty(info_layer);
     layer_set_hidden(standby_layer, true);
     layer_set_hidden(info_layer, false);
-    send_request();
+    //send_request();
   }
 }
 
@@ -486,6 +496,8 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, info_layer);
     layer_set_update_proc(info_layer, update_info);
   } else {
+    // Update weather on watchface load
+    send_request();
     info_layer = layer_create(bounds);
     layer_add_child(window_layer, info_layer);
     layer_set_update_proc(info_layer, update_info);
