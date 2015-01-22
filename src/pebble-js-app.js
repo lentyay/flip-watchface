@@ -36,7 +36,7 @@ Pebble.addEventListener('showConfiguration',
 
 Pebble.addEventListener('webviewclosed',
   function(e) {
-      console.log(e.response);
+      //console.log(e.response);
       sendMessageToPebble(JSON.parse(e.response));
   }
 );
@@ -51,7 +51,7 @@ function sendMessageToPebble(result) {
 function getWeatherOW(params) {
     var response;
 
-    console.log("updating weather");
+    //console.log("updating weather");
     var req = new XMLHttpRequest();
     req.open("GET",
              "http://api.openweathermap.org/data/2.5/weather?"+
