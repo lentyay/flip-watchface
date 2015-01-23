@@ -48,6 +48,7 @@ static Layer *info_layer;
 
 int current_screen = 0;
 AppTimer *standby_timer = NULL;
+AppTimer *weather_timer = NULL;
 
 int cond_t = 99;
 int cond_icon = 0;
@@ -58,9 +59,7 @@ static bool send_request() {
     app_message_outbox_begin(&iter);
 
     if (iter == NULL) {
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "Iter is NULL.");
         return false;
-vibes_double_pulse();
     };
 
     Tuplet value0 = TupletInteger(W_KEY, settings.w_key);
@@ -69,9 +68,14 @@ vibes_double_pulse();
     dict_write_end(iter);
     app_message_outbox_send();
 
-vibes_short_pulse();
- 
+//vibes_short_pulse();
+
     return true;
+}
+
+static void weather_callback() {
+    send_request();
+    weather_timer = app_timer_register(900000, weather_callback, NULL);
 }
 
 void in_received_handler(DictionaryIterator *received, void *context) {
@@ -90,6 +94,9 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 
     if (key_tuple) {
         settings.w_key = key_tuple->value->int32;
+
+        // Update weather after submit settings page
+        send_request();
     };
     if (temp_tuple) {
         cond_t = temp_tuple->value->int16;
@@ -124,8 +131,6 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     if (icon_battery_tuple) {
         settings.icon_battery = (bool)icon_battery_tuple->value->int16;
     };
-    // Update weather after submit settings page
-    send_request();
 }
 
 static void app_message_init() {
@@ -141,13 +146,13 @@ static void load_resources() {
     unsigned char RESOURCE[13] = {RESOURCE_ID_DIGITS_CLOCK, RESOURCE_ID_DIGITS_DATE, RESOURCE_ID_SECONDS, RESOURCE_ID_BACKGROUND, RESOURCE_ID_DAYS, RESOURCE_ID_DAYS_EN, RESOURCE_ID_MONTHS, RESOURCE_ID_MONTHS_EN, RESOURCE_ID_BATTERY, RESOURCE_ID_BLUETOOTH, RESOURCE_ID_AMPM, RESOURCE_ID_WEATHER, RESOURCE_ID_WEATHER_BG};
     for (int i=0; i<13; ++i) {
         bitmap[i] = gbitmap_create_with_resource(RESOURCE[i] );
-    }  
+    }
 }
 
 static void destroy_resources() {
     for (int i=0; i<13; ++i) {
         gbitmap_destroy(bitmap[i]);
-    }  
+    }
 }
 
 static void draw_picture(GContext* ctx, GBitmap **sources, GRect bounces,
@@ -198,13 +203,13 @@ static void update_standby(Layer *layer, GContext* ctx) {
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
     };
-  
+
     // Minutes
     int min_dicker = tick_time->tm_min/10;
     int min_unit = tick_time->tm_min%10;
     draw_picture(ctx, &bitmap[0], GRect(78, 61, 29, 43), min_dicker);
     draw_picture(ctx, &bitmap[0], GRect(110, 61, 29, 43), min_unit);
-  
+
     // Hours
     int hour_dicker = tick_time->tm_hour/10;
     int hour_unit = tick_time->tm_hour%10;
@@ -214,7 +219,7 @@ static void update_standby(Layer *layer, GContext* ctx) {
         draw_picture(ctx, &bitmap[0], GRect(6, 61, 29, 43), 0);
     };
     draw_picture(ctx, &bitmap[0], GRect(38, 61, 29, 43), hour_unit);
-  
+
   // Рисуем разделитель
     if (settings.s_standby_i) {
           graphics_context_set_fill_color(ctx, GColorBlack);
@@ -243,7 +248,6 @@ static void update_standby(Layer *layer, GContext* ctx) {
 }
 
 static void update_info(Layer *layer, GContext* ctx) {
-    //APP_LOG(APP_LOG_LEVEL_DEBUG, "Info redraw");
     GRect bounds = layer_get_bounds(layer);
 
     if (settings.s_info_i) {
@@ -266,7 +270,7 @@ static void update_info(Layer *layer, GContext* ctx) {
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
     draw_picture(ctx, &bitmap[3], GRect(51, 60, 43, 13), 0);
     graphics_draw_circle(ctx, GPoint(72, 88), 30);
-  
+
     time_t temp = time(NULL);
     struct tm *tick_time = localtime(&temp);
 
@@ -281,20 +285,20 @@ static void update_info(Layer *layer, GContext* ctx) {
             ampm = 0;
         };
         draw_picture(ctx, &bitmap[10], GRect(62, 0, 21, 11), ampm);
-        
+
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
     };
 
     // Seconds
     draw_picture(ctx, &bitmap[2], GRect(54, 61, 37, 10), tick_time->tm_sec);
-  
+
     // Minutes
     int min_dicker = tick_time->tm_min/10;
     int min_unit = tick_time->tm_min%10;
     draw_picture(ctx, &bitmap[0], GRect(78, 13, 29, 43), min_dicker);
     draw_picture(ctx, &bitmap[0], GRect(110, 13, 29, 43), min_unit);
-  
+
     // Hours
     int hour_dicker = tick_time->tm_hour/10;
     int hour_unit = tick_time->tm_hour%10;
@@ -304,7 +308,7 @@ static void update_info(Layer *layer, GContext* ctx) {
         draw_picture(ctx, &bitmap[0], GRect(6, 13, 29, 43), 0);
     };
     draw_picture(ctx, &bitmap[0], GRect(38, 13, 29, 43), hour_unit);
-  
+
   // Рисуем разделитель
     if (settings.s_info_i) {
           graphics_context_set_fill_color(ctx, GColorBlack);
@@ -358,9 +362,9 @@ static void update_info(Layer *layer, GContext* ctx) {
         .size = GSize(124, 1)
     };
     graphics_fill_rect(ctx, frame, 0, GCornerNone);
-  
-  
-  
+
+
+
   // Дата
     // Day number
     int day_dicker = tick_time->tm_mday/10;
@@ -375,17 +379,17 @@ static void update_info(Layer *layer, GContext* ctx) {
     } else {
         draw_picture(ctx, &bitmap[5], GRect(1, 75, 39, 37), w_day);
     }
-  
-  
+
+
     // Month
     if (settings.s_ru_lang) {
         draw_picture(ctx, &bitmap[6], GRect(105, 75, 39, 37), tick_time->tm_mon);
     } else {
         draw_picture(ctx, &bitmap[7], GRect(105, 75, 39, 37), tick_time->tm_mon);
     }
-  
- 
-  
+
+
+
     // Батарейка
     if (settings.icon_battery) {
         BatteryChargeState charge_state = battery_state_service_peek();
@@ -396,7 +400,7 @@ static void update_info(Layer *layer, GContext* ctx) {
         draw_picture(ctx, &bitmap[8], GRect(119, 3, 17, 7), bat_percent);
         draw_picture(ctx, &bitmap[9], GRect(136, 2, 18, 9), 0);
     };
-      
+
     // bluetooth
     if (settings.icon_bt) {
         if (bluetooth_connection_service_peek()) {
@@ -432,8 +436,6 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
         layer_mark_dirty(standby_layer);
     };
     if (units_changed & HOUR_UNIT) {
-        // Update weather every hour
-        send_request();
         if (settings.vibe_hourly) {
             vibes_long_pulse();
         };
@@ -465,7 +467,6 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
     layer_mark_dirty(info_layer);
     layer_set_hidden(standby_layer, true);
     layer_set_hidden(info_layer, false);
-    //send_request();
   }
 }
 
@@ -496,8 +497,6 @@ static void window_load(Window *window) {
     layer_add_child(window_layer, info_layer);
     layer_set_update_proc(info_layer, update_info);
   } else {
-    // Update weather on watchface load
-    send_request();
     info_layer = layer_create(bounds);
     layer_add_child(window_layer, info_layer);
     layer_set_update_proc(info_layer, update_info);
@@ -520,6 +519,7 @@ static void init(void) {
   } else {
       persist_write_data(STORAGE_KEY, &settings, sizeof(settings));
   };
+
   window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
@@ -528,6 +528,9 @@ static void init(void) {
   const bool animated = true;
 
   app_message_init();
+
+  // weather update on watchface load
+  weather_timer = app_timer_register(5000, weather_callback, NULL);
 
   window_stack_push(window, animated);
   tick_timer_service_subscribe(SECOND_UNIT, tick_handler);
@@ -545,9 +548,6 @@ static void deinit(void) {
 
 int main(void) {
   init();
-
-  //APP_LOG(APP_LOG_LEVEL_DEBUG, "Done initializing, pushed window: %p", window);
-
   app_event_loop();
   deinit();
 }
