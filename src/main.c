@@ -12,6 +12,7 @@
 #define S_AUTO 10
 #define ICON_BT 11
 #define ICON_BATTERY 12
+#define TEMP_F 13
 
 #define STORAGE_KEY 99
 
@@ -25,6 +26,7 @@ typedef struct persist {
     bool s_auto;
     bool icon_bt;
     bool icon_battery;
+    int temp_f;
 } __attribute__((__packed__)) persist;
 
 persist settings = {
@@ -36,7 +38,8 @@ persist settings = {
     .s_ru_lang = true,
     .s_auto = false,
     .icon_bt = true,
-    .icon_battery = true
+    .icon_battery = true,
+    .temp_f = 0
 };
 
 static Window *window;
@@ -53,6 +56,9 @@ AppTimer *weather_timer = NULL;
 int cond_t = 99;
 int cond_icon = 0;
 char cond_city[32];
+char message[80];
+char temp_scale;
+bool show_temp = true;
 
 static bool send_request() {
     DictionaryIterator *iter;
@@ -65,6 +71,10 @@ static bool send_request() {
     Tuplet value0 = TupletInteger(W_KEY, settings.w_key);
     dict_write_tuplet(iter, &value0);
 
+    Tuplet value1 = TupletInteger(TEMP_F, settings.temp_f);
+    dict_write_tuplet(iter, &value1);
+  
+  
     dict_write_end(iter);
     app_message_outbox_send();
 
@@ -91,7 +101,12 @@ void in_received_handler(DictionaryIterator *received, void *context) {
     Tuple *s_auto_tuple = dict_find(received, S_AUTO);
     Tuple *icon_bt_tuple = dict_find(received, ICON_BT);
     Tuple *icon_battery_tuple = dict_find(received, ICON_BATTERY);
+    Tuple *temp_f_tuple = dict_find(received, TEMP_F);
 
+    if (temp_f_tuple) {
+        settings.temp_f = temp_f_tuple->value->int16;
+    };
+  
     if (key_tuple) {
         settings.w_key = key_tuple->value->int32;
 
@@ -145,7 +160,7 @@ static void app_message_init() {
 static void load_resources() {
     unsigned char RESOURCE[13] = {RESOURCE_ID_DIGITS_CLOCK, RESOURCE_ID_DIGITS_DATE, RESOURCE_ID_SECONDS, RESOURCE_ID_BACKGROUND, RESOURCE_ID_DAYS, RESOURCE_ID_DAYS_EN, RESOURCE_ID_MONTHS, RESOURCE_ID_MONTHS_EN, RESOURCE_ID_BATTERY, RESOURCE_ID_BLUETOOTH, RESOURCE_ID_AMPM, RESOURCE_ID_WEATHER, RESOURCE_ID_WEATHER_BG};
     for (int i=0; i<13; ++i) {
-        bitmap[i] = gbitmap_create_with_resource(RESOURCE[i] );
+        bitmap[i] = gbitmap_create_with_resource(RESOURCE[i]);
     }
 }
 
@@ -375,17 +390,17 @@ static void update_info(Layer *layer, GContext* ctx) {
     // Day name
     int w_day = tick_time->tm_wday;
     if (settings.s_ru_lang) {
-        draw_picture(ctx, &bitmap[4], GRect(1, 75, 39, 37), w_day);
+        draw_picture(ctx, &bitmap[4], GRect(1, 70, 39, 37), w_day);
     } else {
-        draw_picture(ctx, &bitmap[5], GRect(1, 75, 39, 37), w_day);
+        draw_picture(ctx, &bitmap[5], GRect(1, 70, 39, 37), w_day);
     }
 
 
     // Month
     if (settings.s_ru_lang) {
-        draw_picture(ctx, &bitmap[6], GRect(105, 75, 39, 37), tick_time->tm_mon);
+        draw_picture(ctx, &bitmap[6], GRect(105, 70, 39, 37), tick_time->tm_mon);
     } else {
-        draw_picture(ctx, &bitmap[7], GRect(105, 75, 39, 37), tick_time->tm_mon);
+        draw_picture(ctx, &bitmap[7], GRect(105, 70, 39, 37), tick_time->tm_mon);
     }
 
 
@@ -413,17 +428,32 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     if (cond_t < 99) {
         draw_picture(ctx, &bitmap[11], GRect(32, 126, 81, 31), cond_icon);
-        // Город
-        char message[80] = " ";
-        if (strlen(cond_city) <= 8) {
-          snprintf(message, sizeof(message), "%s %d", cond_city, cond_t);
+
+        if (settings.temp_f == 1) {
+            temp_scale = 'F';
         } else {
-          snprintf(message, sizeof(message), "%d", cond_t);
+            temp_scale = 'C';
         }
+
+        if (tick_time->tm_sec == 0 || tick_time->tm_sec == 20 || tick_time->tm_sec == 40) {
+            show_temp = !show_temp;
+        }
+      
+        // Город
+        if (strlen(cond_city) <= 10) {
+            if (show_temp) {
+                snprintf(message, sizeof(message), "%s", cond_city);
+            } else {
+                snprintf(message, sizeof(message), "%d °%c", cond_t, temp_scale);
+            }
+        } else {
+            snprintf(message, sizeof(message), "%d °%c", cond_t, temp_scale);
+        }
+          
         graphics_draw_text(ctx,
                            message,
                            fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),
-                           GRect(23, 152, 99, 16),
+                           GRect(23, 153, 99, 16),
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
@@ -471,6 +501,7 @@ static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void tap_handler(AccelAxisType axis, int32_t direction) {
+  show_temp = !show_temp;
   if (settings.s_auto) {
     current_screen = !current_screen;
   }
@@ -530,7 +561,7 @@ static void init(void) {
   app_message_init();
 
   // weather update on watchface load
-  weather_timer = app_timer_register(5000, weather_callback, NULL);
+  weather_timer = app_timer_register(3000, weather_callback, NULL);
 
   window_stack_push(window, animated);
   tick_timer_service_subscribe(SECOND_UNIT, tick_handler);

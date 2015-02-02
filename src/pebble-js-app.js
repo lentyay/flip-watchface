@@ -63,8 +63,15 @@ function getWeatherOW(params) {
                 var temp_c = response.main.temp-273.15;
                 var icon = response.weather[0].icon;
                 var name = response.name;
+
+                if (params.TEMP_F == 1) {
+                  var temperature = Math.round(temp_c*1.8)+32;
+                } else {
+                  var temperature = Math.round(temp_c);
+                }
+
                 sendMessageToPebble({
-                    "W_TEMP": temp_c,
+                    "W_TEMP": temperature,
                     "W_ICON": weatherIcon[icon],
                     "W_CITY": name
                 });

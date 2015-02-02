@@ -6,6 +6,7 @@
         "S_INFO_I": 8,
         "S_RU_LANG": 9,
         "S_STANDBY_I": 7,
+        "TEMP_F": 13,
         "VIBE_BT": 5,
         "VIBE_HOURLY": 6,
         "W_CITY": 4,
@@ -91,7 +92,7 @@
     "shortName": "Flip watchface",
     "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
     "versionCode": 1,
-    "versionLabel": "1.03",
+    "versionLabel": "1.05",
     "watchapp": {
         "watchface": true
     }
