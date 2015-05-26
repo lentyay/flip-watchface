@@ -4,9 +4,7 @@
         "ICON_BT": 11,
         "S_AUTO": 10,
         "S_INFO_I": 8,
-        "S_RU_LANG": 9,
         "S_STANDBY_I": 7,
-        "TEMP_F": 13,
         "VIBE_BT": 5,
         "VIBE_HOURLY": 6,
         "W_CITY": 4,
@@ -23,58 +21,18 @@
     "resources": {
         "media": [
             {
-                "file": "images/ampm.png",
-                "name": "AMPM",
+                "file": "images/months_dk.png",
+                "name": "MONTHS",
                 "type": "png"
             },
             {
-                "file": "images/weather_bg.png",
-                "name": "WEATHER_BG",
-                "type": "png"
-            },
-            {
-                "file": "images/weather.png",
-                "name": "WEATHER",
-                "type": "png"
-            },
-            {
-                "file": "images/seconds.png",
-                "name": "SECONDS",
-                "type": "png"
-            },
-            {
-                "file": "images/background.png",
-                "name": "BACKGROUND",
-                "type": "png"
-            },
-            {
-                "file": "images/battery.png",
-                "name": "BATTERY",
-                "type": "png"
-            },
-            {
-                "file": "images/digits_date.png",
-                "name": "DIGITS_DATE",
-                "type": "png"
-            },
-            {
-                "file": "images/days_en.png",
-                "name": "DAYS_EN",
-                "type": "png"
-            },
-            {
-                "file": "images/days.png",
+                "file": "images/days_dk.png",
                 "name": "DAYS",
                 "type": "png"
             },
             {
-                "file": "images/months_en.png",
-                "name": "MONTHS_EN",
-                "type": "png"
-            },
-            {
-                "file": "images/months.png",
-                "name": "MONTHS",
+                "file": "images/digits_clock.png",
+                "name": "DIGITS_CLOCK",
                 "type": "png"
             },
             {
@@ -83,16 +41,47 @@
                 "type": "png"
             },
             {
-                "file": "images/digits_clock.png",
-                "name": "DIGITS_CLOCK",
+                "file": "images/digits_date.png",
+                "name": "DIGITS_DATE",
+                "type": "png"
+            },
+            {
+                "file": "images/battery.png",
+                "name": "BATTERY",
+                "type": "png"
+            },
+            {
+                "file": "images/background.png",
+                "name": "BACKGROUND",
+                "type": "png"
+            },
+            {
+                "file": "images/seconds.png",
+                "name": "SECONDS",
+                "type": "png"
+            },
+            {
+                "file": "images/weather.png",
+                "name": "WEATHER",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_bg.png",
+                "name": "WEATHER_BG",
+                "type": "png"
+            },
+            {
+                "file": "images/ampm.png",
+                "name": "AMPM",
                 "type": "png"
             }
         ]
     },
+    "sdkVersion": "2",
     "shortName": "Flip watchface",
-    "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
+    "uuid": "26725ee6-aeaf-44f2-9449-925ac04cd438",
     "versionCode": 1,
-    "versionLabel": "1.05",
+    "versionLabel": "1.03",
     "watchapp": {
         "watchface": true
     }
