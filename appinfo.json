@@ -23,8 +23,43 @@
     "resources": {
         "media": [
             {
-                "file": "images/ampm.png",
-                "name": "AMPM",
+                "file": "images/days_bg.png",
+                "name": "DAYS_BG",
+                "type": "png"
+            },
+            {
+                "file": "images/months.png",
+                "name": "MONTHS",
+                "type": "png"
+            },
+            {
+                "file": "images/months_en.png",
+                "name": "MONTHS_EN",
+                "type": "png"
+            },
+            {
+                "file": "images/days.png",
+                "name": "DAYS",
+                "type": "png"
+            },
+            {
+                "file": "images/days_en.png",
+                "name": "DAYS_EN",
+                "type": "png"
+            },
+            {
+                "file": "images/digits_date.png",
+                "name": "DIGITS_DAY",
+                "type": "png"
+            },
+            {
+                "file": "images/digits_clock.png",
+                "name": "DIGITS_TIME",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_bg_top.png",
+                "name": "WEATHER_BG_TOP",
                 "type": "png"
             },
             {
@@ -33,13 +68,18 @@
                 "type": "png"
             },
             {
-                "file": "images/weather.png",
-                "name": "WEATHER",
+                "file": "images/seconds.png",
+                "name": "SECONDS",
                 "type": "png"
             },
             {
-                "file": "images/seconds.png",
-                "name": "SECONDS",
+                "file": "fonts/weathericons-regular-webfont.ttf",
+                "name": "FONT_WEATHER_26",
+                "type": "font"
+            },
+            {
+                "file": "images/ampm.png",
+                "name": "AMPM",
                 "type": "png"
             },
             {
@@ -53,46 +93,20 @@
                 "type": "png"
             },
             {
-                "file": "images/digits_date.png",
-                "name": "DIGITS_DATE",
-                "type": "png"
-            },
-            {
-                "file": "images/days_en.png",
-                "name": "DAYS_EN",
-                "type": "png"
-            },
-            {
-                "file": "images/days.png",
-                "name": "DAYS",
-                "type": "png"
-            },
-            {
-                "file": "images/months_en.png",
-                "name": "MONTHS_EN",
-                "type": "png"
-            },
-            {
-                "file": "images/months.png",
-                "name": "MONTHS",
-                "type": "png"
-            },
-            {
                 "file": "images/bluetooth.png",
                 "name": "BLUETOOTH",
-                "type": "png"
-            },
-            {
-                "file": "images/digits_clock.png",
-                "name": "DIGITS_CLOCK",
                 "type": "png"
             }
         ]
     },
+    "sdkVersion": "3",
     "shortName": "Flip watchface",
+    "targetPlatforms": [
+        "aplite",
+        "basalt"
+    ],
     "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
-    "versionCode": 1,
-    "versionLabel": "1.05",
+    "versionLabel": "2.0",
     "watchapp": {
         "watchface": true
     }

@@ -1,3 +1,4 @@
+/*
 var weatherIcon = {
     "01d" : 0,
     "02d" : 1,
@@ -18,6 +19,31 @@ var weatherIcon = {
     "13n" : 7,
     "50n" : 8
 };
+*/
+
+// Weather Icons Font
+// http://erikflowers.github.io/weather-icons/
+var weatherIcon = {
+    "01d" : "0",
+    "02d" : "1",
+    "03d" : "2",
+    "04d" : "3",
+    "09d" : "4",
+    "10d" : "5",
+    "11d" : "6",
+    "13d" : "7",
+    "50d" : "8",
+    "01n" : "9",
+    "02n" : "a",
+    "03n" : "2",
+    "04n" : "3",
+    "09n" : "4",
+    "10n" : "5",
+    "11n" : "6",
+    "13n" : "7",
+    "50n" : "8"
+};
+
 
 Pebble.addEventListener("ready", function(e) {});
 
