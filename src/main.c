@@ -84,8 +84,6 @@ static bool send_request() {
     dict_write_end(iter);
     app_message_outbox_send();
 
-    //vibes_short_pulse();
-
     return true;
 }
 
@@ -168,18 +166,11 @@ static void load_resources() {
     unsigned char RESOURCE[14] = {RESOURCE_ID_DIGITS_TIME, RESOURCE_ID_SECONDS, RESOURCE_ID_BACKGROUND, RESOURCE_ID_DAYS, RESOURCE_ID_MONTHS, RESOURCE_ID_BATTERY, RESOURCE_ID_BLUETOOTH, RESOURCE_ID_AMPM, RESOURCE_ID_WEATHER_BG, RESOURCE_ID_WEATHER_BG_TOP, RESOURCE_ID_DIGITS_DAY, RESOURCE_ID_DAYS_EN, RESOURCE_ID_MONTHS_EN, RESOURCE_ID_DAYS_BG};
     for (int i=0; i<bitmap_count; ++i) {
         bitmap[i] = gbitmap_create_with_resource(RESOURCE[i]);
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "%d %d", i, resource_size(resource_get_handle(RESOURCE[i])));  
+        //APP_LOG(APP_LOG_LEVEL_DEBUG, "%d %d", i, resource_size(resource_get_handle(RESOURCE[i])));  
 
     }
   
     weather_icon = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_WEATHER_26));
-/*  
-    font_days = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BERNARD_38));
-    font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BERNARD_42));
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", resource_size(resource_get_handle(RESOURCE_ID_FONT_WEATHER_26)));  
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", resource_size(resource_get_handle(RESOURCE_ID_FONT_BERNARD_38)));  
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "%d", resource_size(resource_get_handle(RESOURCE_ID_FONT_BERNARD_42)));  
-*/
 }
 
 static void destroy_resources() {
@@ -261,54 +252,6 @@ static void update_standby(Layer *layer, GContext* ctx) {
     draw_picture(ctx, &bitmap[0], GRect(6, 61, 29, 43), tick_time->tm_hour/10);
     draw_picture(ctx, &bitmap[0], GRect(38, 61, 29, 43), tick_time->tm_hour%10);
 
-/*
-    // Minutes
-    draw_picture(ctx, &bitmap[0], GRect(78, 61, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_min/10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(78, 57, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-
-    draw_picture(ctx, &bitmap[0], GRect(110, 61, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_min%10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(110, 57, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    ); 
-  
-    // Hours
-    draw_picture(ctx, &bitmap[0], GRect(6, 61, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_hour/10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(6, 57, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-  
-    draw_picture(ctx, &bitmap[0], GRect(38, 61, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_hour%10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(38, 57, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-*/  
-  
   // Рисуем разделитель
   #ifdef PBL_PLATFORM_APLITE
     if (settings.s_standby_i) {
@@ -385,17 +328,7 @@ static void update_info(Layer *layer, GContext* ctx) {
     // Day number
     draw_picture(ctx, &bitmap[10], GRect(54, 75, 17, 31), tick_time->tm_mday/10);
     draw_picture(ctx, &bitmap[10], GRect(74, 75, 17, 31), tick_time->tm_mday%10);
-/*  
-    snprintf(message, sizeof(message), "%d%d", tick_time->tm_mday/10, tick_time->tm_mday%10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_days,
-                       GRect(50, 69, 44, 40),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-*/
+
     // Day name
     draw_picture(ctx, &bitmap[13], GRect(1, 70, 39, 37), 0);
     if (settings.s_ru_lang) {
@@ -438,54 +371,6 @@ static void update_info(Layer *layer, GContext* ctx) {
     draw_picture(ctx, &bitmap[0], GRect(6, 13, 29, 43), tick_time->tm_hour/10);
     draw_picture(ctx, &bitmap[0], GRect(38, 13, 29, 43), tick_time->tm_hour%10);
   
-/*  
-    // Minutes
-    draw_picture(ctx, &bitmap[0], GRect(78, 13, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_min/10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(78, 9, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-
-    draw_picture(ctx, &bitmap[0], GRect(110, 13, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_min%10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(110, 9, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-  
-    // Hours
-    draw_picture(ctx, &bitmap[0], GRect(6, 13, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_hour/10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(6, 9, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-  
-    draw_picture(ctx, &bitmap[0], GRect(38, 13, 29, 43), 0);
-    snprintf(message, sizeof(message), "%d", tick_time->tm_hour%10);
-    graphics_draw_text(ctx,
-                       message,
-                       font_time,
-                       GRect(38, 9, 29, 43),
-                       GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentCenter,
-                       NULL
-    );
-*/
-
   // Weather background lines
     #ifdef PBL_PLATFORM_BASALT
       graphics_context_set_fill_color(ctx, GColorBulgarianRose);
