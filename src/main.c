@@ -55,7 +55,6 @@ AppTimer *standby_timer = NULL;
 AppTimer *weather_timer = NULL;
 
 int cond_t = 99;
-//int cond_icon = 0;
 char cond_icon[1];
 
 char cond_city[32];
@@ -63,8 +62,6 @@ char message[80];
 char temp_scale;
 bool show_temp = true;
 GFont weather_icon;
-GFont font_days;
-GFont font_time;
 
 static bool send_request() {
     DictionaryIterator *iter;
@@ -121,7 +118,6 @@ static void in_received_handler(DictionaryIterator *received, void *context) {
         cond_t = temp_tuple->value->int16;
     };
     if (icon_tuple) {
-        //cond_icon = icon_tuple->value->int16;
         strcpy(cond_icon, icon_tuple->value->cstring);
     };
     if (city_tuple) {
@@ -179,8 +175,6 @@ static void destroy_resources() {
     }
   
     fonts_unload_custom_font(weather_icon);
-    fonts_unload_custom_font(font_days);
-    fonts_unload_custom_font(font_time);
 }
 
 static void draw_picture(GContext* ctx, GBitmap **sources, GRect bounces, int number) {
@@ -196,10 +190,9 @@ static void timer_callback() {
     current_screen = 0;
 }
 
-static void update_standby(Layer *layer, GContext* ctx) {
-    GRect bounds = layer_get_bounds(layer);
+static void set_colors(GContext* ctx, bool invert) {
   #ifdef PBL_PLATFORM_APLITE
-    if (settings.s_standby_i) {
+    if (invert) {
         // Цвет фона - белый
         graphics_context_set_fill_color(ctx, GColorWhite);
         graphics_context_set_stroke_color(ctx, GColorBlack);
@@ -222,6 +215,20 @@ static void update_standby(Layer *layer, GContext* ctx) {
       // Режим композитинга - нормальный
       graphics_context_set_compositing_mode(ctx, GCompOpAssign);
   #endif  
+}
+
+static void set_weather_colors(GContext* ctx) {
+  #ifdef PBL_PLATFORM_BASALT
+    if (strcmp(cond_icon, "0") == 0) {
+      graphics_context_set_text_color(ctx, GColorDarkCandyAppleRed);
+    }
+  #endif  
+}
+
+
+static void update_standby(Layer *layer, GContext* ctx) {
+    GRect bounds = layer_get_bounds(layer);
+    set_colors(ctx, settings.s_standby_i);
 
     // Заливаем слой
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
@@ -289,31 +296,7 @@ static void update_standby(Layer *layer, GContext* ctx) {
 
 static void update_info(Layer *layer, GContext* ctx) {
     GRect bounds = layer_get_bounds(layer);
-
-  #ifdef PBL_PLATFORM_APLITE
-    if (settings.s_info_i) {
-        // Цвет фона - белый
-        graphics_context_set_fill_color(ctx, GColorWhite);
-        graphics_context_set_stroke_color(ctx, GColorBlack);
-        graphics_context_set_text_color(ctx, GColorWhite);
-        // Режим композитинга - инвернтный
-        graphics_context_set_compositing_mode(ctx, GCompOpAssignInverted);
-    } else {
-        // Цвет фона - черный
-        graphics_context_set_fill_color(ctx, GColorBlack);
-        graphics_context_set_stroke_color(ctx, GColorWhite);
-        graphics_context_set_text_color(ctx, GColorBlack);
-        // Режим композитинга - нормальный
-        graphics_context_set_compositing_mode(ctx, GCompOpAssign);
-    };
-  #elif PBL_PLATFORM_BASALT
-      // Цвет фона - черный
-      graphics_context_set_fill_color(ctx, GColorBlack);
-      graphics_context_set_stroke_color(ctx, GColorChromeYellow);
-      graphics_context_set_text_color(ctx, GColorBlack);
-      // Режим композитинга - нормальный
-      graphics_context_set_compositing_mode(ctx, GCompOpAssign);
-  #endif  
+    set_colors(ctx, settings.s_info_i);
 
     // Заливаем слой
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
@@ -472,6 +455,8 @@ static void update_info(Layer *layer, GContext* ctx) {
     draw_picture(ctx, &bitmap[9], GRect(29, 122, 87, 17), 0);
 
     if (cond_t < 99) {
+        //set_weather_colors(ctx);        
+          
         graphics_draw_text(ctx,
                            cond_icon,
                            weather_icon,
@@ -504,6 +489,8 @@ static void update_info(Layer *layer, GContext* ctx) {
             snprintf(message, sizeof(message), "%d °%c", cond_t, temp_scale);
         }
           
+        // Return default colors after weather icon coloring
+        set_colors(ctx, settings.s_info_i);
         graphics_draw_text(ctx,
                            message,
                            fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),
@@ -513,9 +500,6 @@ static void update_info(Layer *layer, GContext* ctx) {
                            NULL
         );
     };
-  
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Width = %d", heap_bytes_used());  
-
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {

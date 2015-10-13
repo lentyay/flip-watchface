@@ -81,7 +81,7 @@ function getWeatherOW(params) {
     var req = new XMLHttpRequest();
     req.open("GET",
              "http://api.openweathermap.org/data/2.5/weather?"+
-             "id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate", true);
+             "id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate&appid=bd82977b86bf27fb59a04b61b657fb6f", true);
     req.onload = function(e) {
         if (req.readyState == 4) {
             if (req.status == 200) {

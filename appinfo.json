@@ -23,6 +23,12 @@
     "resources": {
         "media": [
             {
+                "file": "images/menu_icon.png",
+                "menuIcon": true,
+                "name": "ICON",
+                "type": "png"
+            },
+            {
                 "file": "images/days_bg.png",
                 "name": "DAYS_BG",
                 "type": "png"
@@ -100,13 +106,13 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Flip watchface",
+    "shortName": "Flip Clock",
     "targetPlatforms": [
         "aplite",
         "basalt"
     ],
     "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
-    "versionLabel": "2.0",
+    "versionLabel": "2.1",
     "watchapp": {
         "watchface": true
     }
