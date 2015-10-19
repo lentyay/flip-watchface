@@ -61,6 +61,7 @@ char cond_city[32];
 char message[80];
 char temp_scale;
 bool show_temp = true;
+bool colored_weather = true;
 GFont weather_icon;
 
 static bool send_request() {
@@ -191,7 +192,14 @@ static void timer_callback() {
 }
 
 static void set_colors(GContext* ctx, bool invert) {
-  #ifdef PBL_PLATFORM_APLITE
+  #if defined(PBL_COLOR)
+      // Цвет фона - черный
+      graphics_context_set_fill_color(ctx, GColorBlack);
+      graphics_context_set_stroke_color(ctx, GColorChromeYellow);
+      graphics_context_set_text_color(ctx, GColorBlack);
+      // Режим композитинга - нормальный
+      graphics_context_set_compositing_mode(ctx, GCompOpAssign);
+  #elif defined(PBL_BW)
     if (invert) {
         // Цвет фона - белый
         graphics_context_set_fill_color(ctx, GColorWhite);
@@ -207,20 +215,21 @@ static void set_colors(GContext* ctx, bool invert) {
         // Режим композитинга - нормальный
         graphics_context_set_compositing_mode(ctx, GCompOpAssign);
     };
-  #elif PBL_PLATFORM_BASALT
-      // Цвет фона - черный
-      graphics_context_set_fill_color(ctx, GColorBlack);
-      graphics_context_set_stroke_color(ctx, GColorChromeYellow);
-      graphics_context_set_text_color(ctx, GColorBlack);
-      // Режим композитинга - нормальный
-      graphics_context_set_compositing_mode(ctx, GCompOpAssign);
-  #endif  
+  #endif
 }
 
 static void set_weather_colors(GContext* ctx) {
-  #ifdef PBL_PLATFORM_BASALT
+  #if defined(PBL_COLOR)
     if (strcmp(cond_icon, "0") == 0) {
-      graphics_context_set_text_color(ctx, GColorDarkCandyAppleRed);
+      graphics_context_set_text_color(ctx, GColorOrange);
+    } else if ((strcmp(cond_icon, "2") == 0) || (strcmp(cond_icon, "3") == 0) || (strcmp(cond_icon, "7") == 0)) {
+      graphics_context_set_text_color(ctx, GColorVividCerulean);
+    } else if ((strcmp(cond_icon, "4") == 0) || (strcmp(cond_icon, "5") == 0) || (strcmp(cond_icon, "8") == 0)) {
+      graphics_context_set_text_color(ctx, GColorLiberty);
+    } else if (strcmp(cond_icon, "6") == 0) {
+      graphics_context_set_text_color(ctx, GColorPictonBlue);
+    } else {
+      graphics_context_set_text_color(ctx, GColorBlack);
     }
   #endif  
 }
@@ -260,15 +269,16 @@ static void update_standby(Layer *layer, GContext* ctx) {
     draw_picture(ctx, &bitmap[0], GRect(38, 61, 29, 43), tick_time->tm_hour%10);
 
   // Рисуем разделитель
-  #ifdef PBL_PLATFORM_APLITE
+  #if defined(PBL_COLOR)
+    graphics_context_set_fill_color(ctx, GColorWhite);
+  #elif defined(PBL_BW)
     if (settings.s_standby_i) {
           graphics_context_set_fill_color(ctx, GColorBlack);
     } else {
           graphics_context_set_fill_color(ctx, GColorWhite);
     };
-  #elif PBL_PLATFORM_BASALT
-    graphics_context_set_fill_color(ctx, GColorWhite);
   #endif
+
     GRect frame = (GRect) {
         .origin = GPoint(70, 74),
         .size = GSize(5, 5)
@@ -282,7 +292,7 @@ static void update_standby(Layer *layer, GContext* ctx) {
 
     // AM/PM
     if (!clock_is_24h_style()) {
-      #ifdef PBL_PLATFORM_BASALT
+      #if defined(PBL_COLOR)
         graphics_context_set_fill_color(ctx, GColorChromeYellow);
       #endif
       
@@ -355,7 +365,7 @@ static void update_info(Layer *layer, GContext* ctx) {
     draw_picture(ctx, &bitmap[0], GRect(38, 13, 29, 43), tick_time->tm_hour%10);
   
   // Weather background lines
-    #ifdef PBL_PLATFORM_BASALT
+    #if defined(PBL_COLOR)
       graphics_context_set_fill_color(ctx, GColorBulgarianRose);
       GRect basalt_frame = (GRect) {
         .origin = GPoint(22, 147),
@@ -366,14 +376,14 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     
   // Рисуем разделитель
-  #ifdef PBL_PLATFORM_APLITE
+  #if defined(PBL_COLOR)
+    graphics_context_set_fill_color(ctx, GColorWhite);
+  #elif defined(PBL_BW)
     if (settings.s_info_i) {
           graphics_context_set_fill_color(ctx, GColorBlack);
     } else {
           graphics_context_set_fill_color(ctx, GColorWhite);
     };
-  #elif PBL_PLATFORM_BASALT
-    graphics_context_set_fill_color(ctx, GColorWhite);
   #endif  
 
     GRect frame = (GRect) {
@@ -388,7 +398,7 @@ static void update_info(Layer *layer, GContext* ctx) {
     graphics_fill_rect(ctx, frame, 0, GCornerNone);
 
     // Weather background lines
-    #ifdef PBL_PLATFORM_BASALT
+    #if defined(PBL_COLOR)
       graphics_context_set_fill_color(ctx, GColorChromeYellow);
     #endif  
 
@@ -455,8 +465,27 @@ static void update_info(Layer *layer, GContext* ctx) {
     draw_picture(ctx, &bitmap[9], GRect(29, 122, 87, 17), 0);
 
     if (cond_t < 99) {
-        //set_weather_colors(ctx);        
-          
+      if (colored_weather) {
+      
+        // Draw icon outline
+        #if defined(PBL_COLOR)
+          graphics_context_set_text_color(ctx, GColorPastelYellow);
+          GRect icon_outline[4] = {GRect(22, 122, 99, 16), GRect(22, 124, 99, 16), GRect(24, 122, 99, 16), GRect(24, 124, 99, 16)};
+      
+          for (int i=0; i<4; ++i) {
+            graphics_draw_text(ctx,
+                           cond_icon,
+                           weather_icon,
+                           icon_outline[i],
+                           GTextOverflowModeTrailingEllipsis,
+                           GTextAlignmentCenter,
+                           NULL
+            );
+          }          
+        #endif 
+
+        set_weather_colors(ctx);        
+      }          
         graphics_draw_text(ctx,
                            cond_icon,
                            weather_icon,
@@ -465,8 +494,9 @@ static void update_info(Layer *layer, GContext* ctx) {
                            GTextAlignmentCenter,
                            NULL
         );
-      
-      
+
+        // Return default colors after weather icon coloring
+        set_colors(ctx, settings.s_info_i);
       
         if (settings.temp_f == 1) {
             temp_scale = 'F';
@@ -489,8 +519,6 @@ static void update_info(Layer *layer, GContext* ctx) {
             snprintf(message, sizeof(message), "%d °%c", cond_t, temp_scale);
         }
           
-        // Return default colors after weather icon coloring
-        set_colors(ctx, settings.s_info_i);
         graphics_draw_text(ctx,
                            message,
                            fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),

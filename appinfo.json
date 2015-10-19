@@ -109,7 +109,8 @@
     "shortName": "Flip Clock",
     "targetPlatforms": [
         "aplite",
-        "basalt"
+        "basalt",
+        "chalk"
     ],
     "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
     "versionLabel": "2.1",

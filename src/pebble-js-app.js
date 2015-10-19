@@ -99,6 +99,7 @@ function getWeatherOW(params) {
                 sendMessageToPebble({
                     "W_TEMP": temperature,
                     "W_ICON": weatherIcon[icon],
+                    //"W_ICON": "2",
                     "W_CITY": name
                 });
             }
