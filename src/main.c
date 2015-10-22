@@ -61,8 +61,80 @@ char cond_city[32];
 char message[80];
 char temp_scale;
 bool show_temp = true;
-bool colored_weather = true;
+bool colored_weather = false;
 GFont weather_icon;
+
+
+#if defined(PBL_RECT)
+  int info_bg_coords[4] = {51, 60, 72, 88};
+  int info_daynum_coords[4] = {54, 75, 74, 75};
+  int info_dayname_coords[4] = {1, 70, 1, 84};
+  int info_month_coords[4] = {105, 70, 105, 84};
+  int info_sec_coords[2] = {54, 61};
+  int info_weatherbg_coords[4] = {29, 139, 29, 122};
+  int info_minute_coords[3] = {78, 13, 110};
+  int info_hour_coords[3] = {6, 13, 38};
+  int info_ampm_coords = 62;
+  static const GRect icon_outline_coords[4] = {{{22, 122}, {99, 16}}, {{22, 124}, {99, 16}}, {{24, 122}, {99, 16}}, {{24, 124}, {99, 16}}};
+  static const GRect icon_coords = {{23, 123}, {99, 16}};
+  static const GRect temperature_coords = {{23, 153}, {99, 16}};
+  static const GRect info_clock_separator_coords[2] = {{{70, 26}, {5, 5}}, {{70, 38}, {5, 5}}};
+  static const GRect info_weatherbg2_coords = {{22, 147}, {102, 21}};
+  static const GRect info_weather_lines[7] = {
+    {{17,149},{112,1}},
+    {{16,152},{114,1}},
+    {{15,155},{116,1}},
+    {{14,158},{118,1}},
+    {{13,161},{120,1}},
+    {{12,164},{122,1}},
+    {{11,167},{124,1}}
+  };
+  static const GRect info_btbatt[3] = {
+    {{119,3},{17,7}},
+    {{136,2},{18,9}},
+    {{0,2},{18,9}}
+  };
+  int stdby_minute_coords[3] = {78, 61, 110};
+  int stdby_hour_coords[3] = {6, 61, 38};
+  static const GRect stdby_clock_separator_coords[2] = {{{70, 74}, {5, 5}}, {{70, 86}, {5, 5}}};
+  static const GRect stdby_clock_separator = {{20, 107}, {104, 1}};
+  int stdby_ampm_coords = 108;
+#elif defined(PBL_ROUND)
+  int info_bg_coords[4] = {69, 62, 90, 90};
+  int info_daynum_coords[4] = {72, 77, 92, 77};
+  int info_dayname_coords[4] = {19, 72, 19, 86};
+  int info_month_coords[4] = {123, 72, 123, 86};
+  int info_sec_coords[2] = {72, 63};
+  int info_weatherbg_coords[4] = {47, 141, 40, 124};
+  int info_minute_coords[3] = {96, 16, 128};
+  int info_hour_coords[3] = {24, 16, 56};
+  int info_ampm_coords = 80;
+  static const GRect icon_outline_coords[4] = {{{40, 125}, {99, 16}}, {{40, 127}, {99, 16}}, {{42, 125}, {99, 16}}, {{42, 127}, {99, 16}}};
+  static const GRect icon_coords = {{41, 126}, {99, 16}};
+  static const GRect temperature_coords = {{41, 157}, {99, 16}};
+  static const GRect info_clock_separator_coords[2] = {{{88, 28}, {5, 5}}, {{88, 40}, {5, 5}}};
+  static const GRect info_weatherbg2_coords = {{40, 148}, {100, 32}};
+  static const GRect info_weather_lines[7] = {
+    {{34,148},{112,1}},
+    {{35,151},{110,1}},
+    {{36,154},{108,1}},
+    {{37,157},{106,1}},
+    {{38,160},{104,1}},
+    {{39,163},{102,1}},
+    {{40,166},{100,1}}
+  };
+  static const GRect info_btbatt[3] = {
+    {{26,139},{17,7}},
+    {{44,138},{18,9}},
+    {{133,138},{18,9}}
+  };
+  int stdby_minute_coords[3] = {96, 68, 128};
+  int stdby_hour_coords[3] = {24, 68, 56};
+  static const GRect stdby_clock_separator_coords[2] = {{{88, 80}, {5, 5}}, {{88, 94}, {5, 5}}};
+  static const GRect stdby_clock_separator = {{38, 114}, {104, 1}};
+  int stdby_ampm_coords = 115;
+
+#endif  
 
 static bool send_request() {
     DictionaryIterator *iter;
@@ -254,20 +326,20 @@ static void update_standby(Layer *layer, GContext* ctx) {
         } else {
             ampm = 0;
         };
-        draw_picture(ctx, &bitmap[7], GRect(62, 108, 21, 11), ampm);
+        draw_picture(ctx, &bitmap[7], GRect(info_ampm_coords, stdby_ampm_coords, 21, 11), ampm);
 
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
     };
 
     // Minutes
-    draw_picture(ctx, &bitmap[0], GRect(78, 61, 29, 43), tick_time->tm_min/10);
-    draw_picture(ctx, &bitmap[0], GRect(110, 61, 29, 43), tick_time->tm_min%10);
+    draw_picture(ctx, &bitmap[0], GRect(stdby_minute_coords[0], stdby_minute_coords[1], 29, 43), tick_time->tm_min/10);
+    draw_picture(ctx, &bitmap[0], GRect(stdby_minute_coords[2], stdby_minute_coords[1], 29, 43), tick_time->tm_min%10);
 
     // Hours
-    draw_picture(ctx, &bitmap[0], GRect(6, 61, 29, 43), tick_time->tm_hour/10);
-    draw_picture(ctx, &bitmap[0], GRect(38, 61, 29, 43), tick_time->tm_hour%10);
-
+    draw_picture(ctx, &bitmap[0], GRect(stdby_hour_coords[0], stdby_hour_coords[1], 29, 43), tick_time->tm_hour/10);
+    draw_picture(ctx, &bitmap[0], GRect(stdby_hour_coords[2], stdby_hour_coords[1], 29, 43), tick_time->tm_hour%10);
+ 
   // Рисуем разделитель
   #if defined(PBL_COLOR)
     graphics_context_set_fill_color(ctx, GColorWhite);
@@ -279,28 +351,15 @@ static void update_standby(Layer *layer, GContext* ctx) {
     };
   #endif
 
-    GRect frame = (GRect) {
-        .origin = GPoint(70, 74),
-        .size = GSize(5, 5)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(70, 86),
-        .size = GSize(5, 5)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+    graphics_fill_rect(ctx, stdby_clock_separator_coords[0], 0, GCornerNone);
+    graphics_fill_rect(ctx, stdby_clock_separator_coords[1], 0, GCornerNone);
 
     // AM/PM
     if (!clock_is_24h_style()) {
       #if defined(PBL_COLOR)
         graphics_context_set_fill_color(ctx, GColorChromeYellow);
       #endif
-      
-      frame = (GRect) {
-          .origin = GPoint(20, 107),
-          .size = GSize(104, 1)
-      };
-      graphics_fill_rect(ctx, frame, 0, GCornerNone);
+      graphics_fill_rect(ctx, stdby_clock_separator, 0, GCornerNone);
     }
 }
 
@@ -310,32 +369,32 @@ static void update_info(Layer *layer, GContext* ctx) {
 
     // Заливаем слой
     graphics_fill_rect(ctx, bounds, 0, GCornerNone);
-    draw_picture(ctx, &bitmap[2], GRect(51, 60, 43, 13), 0);
-  
-    graphics_draw_circle(ctx, GPoint(72, 88), 30);
 
+    draw_picture(ctx, &bitmap[2], GRect(info_bg_coords[0], info_bg_coords[1], 43, 13), 0);
+    graphics_draw_circle(ctx, GPoint(info_bg_coords[2], info_bg_coords[3]), 30);
+  
     time_t temp = time(NULL);
     struct tm *tick_time = localtime(&temp);
 
   // Дата
     // Day number
-    draw_picture(ctx, &bitmap[10], GRect(54, 75, 17, 31), tick_time->tm_mday/10);
-    draw_picture(ctx, &bitmap[10], GRect(74, 75, 17, 31), tick_time->tm_mday%10);
+    draw_picture(ctx, &bitmap[10], GRect(info_daynum_coords[0], info_daynum_coords[1], 17, 31), tick_time->tm_mday/10);
+    draw_picture(ctx, &bitmap[10], GRect(info_daynum_coords[2], info_daynum_coords[3], 17, 31), tick_time->tm_mday%10);
 
     // Day name
-    draw_picture(ctx, &bitmap[13], GRect(1, 70, 39, 37), 0);
+    draw_picture(ctx, &bitmap[13], GRect(info_dayname_coords[0], info_dayname_coords[1], 39, 37), 0);
     if (settings.s_ru_lang) {
-      draw_picture(ctx, &bitmap[3], GRect(1, 84, 39, 9), tick_time->tm_wday);
+      draw_picture(ctx, &bitmap[3], GRect(info_dayname_coords[2], info_dayname_coords[3], 39, 9), tick_time->tm_wday);
     } else {
-      draw_picture(ctx, &bitmap[11], GRect(1, 84, 39, 9), tick_time->tm_wday);
+      draw_picture(ctx, &bitmap[11], GRect(info_dayname_coords[2], info_dayname_coords[3], 39, 9), tick_time->tm_wday);
     }
   
     // Month
-    draw_picture(ctx, &bitmap[13], GRect(105, 70, 39, 37), 1);
+    draw_picture(ctx, &bitmap[13], GRect(info_month_coords[0], info_month_coords[1], 39, 37), 1);
     if (settings.s_ru_lang) {
-      draw_picture(ctx, &bitmap[4], GRect(105, 84, 39, 9), tick_time->tm_mon);
+      draw_picture(ctx, &bitmap[4], GRect(info_month_coords[2], info_month_coords[3], 39, 9), tick_time->tm_mon);
     } else {
-      draw_picture(ctx, &bitmap[12], GRect(105, 84, 39, 9), tick_time->tm_mon);
+      draw_picture(ctx, &bitmap[12], GRect(info_month_coords[2], info_month_coords[3], 39, 9), tick_time->tm_mon);
     }
   
   // Время
@@ -347,35 +406,32 @@ static void update_info(Layer *layer, GContext* ctx) {
         } else {
             ampm = 0;
         };
-        draw_picture(ctx, &bitmap[7], GRect(62, 0, 21, 11), ampm);
+        draw_picture(ctx, &bitmap[7], GRect(info_ampm_coords, 0, 21, 11), ampm);
 
         if (tick_time->tm_hour == 0) { tick_time->tm_hour = 12; };
         if (tick_time->tm_hour > 12) { tick_time->tm_hour -= 12; };
     };
 
     // Seconds
-    draw_picture(ctx, &bitmap[1], GRect(54, 61, 37, 10), tick_time->tm_sec);
-
+    draw_picture(ctx, &bitmap[1], GRect(info_sec_coords[0], info_sec_coords[1], 37, 10), tick_time->tm_sec);
+  
     // Minutes
-    draw_picture(ctx, &bitmap[0], GRect(78, 13, 29, 43), tick_time->tm_min/10);
-    draw_picture(ctx, &bitmap[0], GRect(110, 13, 29, 43), tick_time->tm_min%10);
+    draw_picture(ctx, &bitmap[0], GRect(info_minute_coords[0], info_minute_coords[1], 29, 43), tick_time->tm_min/10);
+    draw_picture(ctx, &bitmap[0], GRect(info_minute_coords[2], info_minute_coords[1], 29, 43), tick_time->tm_min%10);
 
     // Hours
-    draw_picture(ctx, &bitmap[0], GRect(6, 13, 29, 43), tick_time->tm_hour/10);
-    draw_picture(ctx, &bitmap[0], GRect(38, 13, 29, 43), tick_time->tm_hour%10);
+    draw_picture(ctx, &bitmap[0], GRect(info_hour_coords[0], info_hour_coords[1], 29, 43), tick_time->tm_hour/10);
+    draw_picture(ctx, &bitmap[0], GRect(info_hour_coords[2], info_hour_coords[1], 29, 43), tick_time->tm_hour%10);
   
-  // Weather background lines
+  
+  // Weather background solid color
     #if defined(PBL_COLOR)
       graphics_context_set_fill_color(ctx, GColorBulgarianRose);
-      GRect basalt_frame = (GRect) {
-        .origin = GPoint(22, 147),
-        .size = GSize(102, 21)
-      };
-      graphics_fill_rect(ctx, basalt_frame, 0, GCornerNone);
+      graphics_fill_rect(ctx, info_weatherbg2_coords, 0, GCornerNone);
     #endif  
 
     
-  // Рисуем разделитель
+  // Clock separator
   #if defined(PBL_COLOR)
     graphics_context_set_fill_color(ctx, GColorWhite);
   #elif defined(PBL_BW)
@@ -385,61 +441,17 @@ static void update_info(Layer *layer, GContext* ctx) {
           graphics_context_set_fill_color(ctx, GColorWhite);
     };
   #endif  
-
-    GRect frame = (GRect) {
-        .origin = GPoint(70, 26),
-        .size = GSize(5, 5)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(70, 38),
-        .size = GSize(5, 5)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
+  
+    graphics_fill_rect(ctx, info_clock_separator_coords[0], 0, GCornerNone);
+    graphics_fill_rect(ctx, info_clock_separator_coords[1], 0, GCornerNone);
 
     // Weather background lines
     #if defined(PBL_COLOR)
       graphics_context_set_fill_color(ctx, GColorChromeYellow);
     #endif  
-
-    frame = (GRect) {
-        .origin = GPoint(17, 149),
-        .size = GSize(112, 1)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(16, 152),
-        .size = GSize(114, 1)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(15, 155),
-        .size = GSize(116, 1)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(14, 158),
-        .size = GSize(118, 1)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(13, 161),
-        .size = GSize(120, 1)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(12, 164),
-        .size = GSize(122, 1)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-    frame = (GRect) {
-        .origin = GPoint(11, 167),
-        .size = GSize(124, 1)
-    };
-    graphics_fill_rect(ctx, frame, 0, GCornerNone);
-
-
-
+    for (int i=0; i<7; ++i) {
+      graphics_fill_rect(ctx, info_weather_lines[i], 0, GCornerNone);
+    }
 
     // Батарейка
     if (settings.icon_battery) {
@@ -448,21 +460,20 @@ static void update_info(Layer *layer, GContext* ctx) {
         if (charge_state.is_charging) {
             bat_percent = 110/10;
         };
-        draw_picture(ctx, &bitmap[5], GRect(119, 3, 17, 7), bat_percent);
-        draw_picture(ctx, &bitmap[6], GRect(136, 2, 18, 9), 0);
+        draw_picture(ctx, &bitmap[5], info_btbatt[0], bat_percent);
+        draw_picture(ctx, &bitmap[6], info_btbatt[1], 0);
     };
 
     // bluetooth
     if (settings.icon_bt) {
         if (bluetooth_connection_service_peek()) {
-            draw_picture(ctx, &bitmap[6], GRect(0, 2, 18, 9), 0);
+            draw_picture(ctx, &bitmap[6], info_btbatt[2], 0);
         };
     };
 
-
     // Погода
-    draw_picture(ctx, &bitmap[8], GRect(29, 139, 87, 29), 0);
-    draw_picture(ctx, &bitmap[9], GRect(29, 122, 87, 17), 0);
+    draw_picture(ctx, &bitmap[8], GRect(info_weatherbg_coords[0], info_weatherbg_coords[1], 87, info_weatherbg_coords[2]), 0);
+    draw_picture(ctx, &bitmap[9], GRect(info_weatherbg_coords[0], info_weatherbg_coords[3], 87, 17), 0); // hat
 
     if (cond_t < 99) {
       if (colored_weather) {
@@ -470,13 +481,12 @@ static void update_info(Layer *layer, GContext* ctx) {
         // Draw icon outline
         #if defined(PBL_COLOR)
           graphics_context_set_text_color(ctx, GColorPastelYellow);
-          GRect icon_outline[4] = {GRect(22, 122, 99, 16), GRect(22, 124, 99, 16), GRect(24, 122, 99, 16), GRect(24, 124, 99, 16)};
       
           for (int i=0; i<4; ++i) {
             graphics_draw_text(ctx,
                            cond_icon,
                            weather_icon,
-                           icon_outline[i],
+                           icon_outline_coords[i],
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
@@ -489,7 +499,7 @@ static void update_info(Layer *layer, GContext* ctx) {
         graphics_draw_text(ctx,
                            cond_icon,
                            weather_icon,
-                           GRect(23, 123, 99, 16),
+                           icon_coords,
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
@@ -522,7 +532,7 @@ static void update_info(Layer *layer, GContext* ctx) {
         graphics_draw_text(ctx,
                            message,
                            fonts_get_system_font(FONT_KEY_GOTHIC_14_BOLD),
-                           GRect(23, 153, 99, 16),
+                           temperature_coords,
                            GTextOverflowModeTrailingEllipsis,
                            GTextAlignmentCenter,
                            NULL
