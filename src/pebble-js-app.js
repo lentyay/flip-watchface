@@ -76,13 +76,12 @@ function sendMessageToPebble(result) {
 
 function getWeatherOW(params) {
     var response;
-    var weather_api_id = "dbc270fbe0dc2f019db4247ff5f8e4b3";
 
-    console.log("http://api.openweathermap.org/data/2.5/weather?id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate&appid="+weather_api_id);
+    //console.log("updating weather");
     var req = new XMLHttpRequest();
     req.open("GET",
              "http://api.openweathermap.org/data/2.5/weather?"+
-             "id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate&appid="+weather_api_id, true);
+             "id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate&appid=bd82977b86bf27fb59a04b61b657fb6f", true);
     req.onload = function(e) {
         if (req.readyState == 4) {
             if (req.status == 200) {
