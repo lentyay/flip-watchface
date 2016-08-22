@@ -75,14 +75,19 @@ function sendMessageToPebble(result) {
 }
 
 function getWeatherOW(params) {
+    /* Getting device info for statistics */
+    var watch = Pebble.getActiveWatchInfo ? Pebble.getActiveWatchInfo() : null;
+  
     var response;
-    var weather_api_id = "dbc270fbe0dc2f019db4247ff5f8e4b3";
-
-    console.log("http://api.openweathermap.org/data/2.5/weather?id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate&appid="+weather_api_id);
     var req = new XMLHttpRequest();
-    req.open("GET",
-             "http://api.openweathermap.org/data/2.5/weather?"+
-             "id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate&appid="+weather_api_id, true);
+    req.open("GET", "http://pebble.newkamikaze.com/weather/"+params.W_KEY.toString()+"?platform="+watch['platform']+"&model="+watch['model'], true);
+
+    // Old direct weather query (just in case)
+/*  
+    var weather_api_id = "dbc270fbe0dc2f019db4247ff5f8e4b3";
+    req.open("GET", "http://api.openweathermap.org/data/2.5/weather?id="+params.W_KEY.toString()+"&unit=metric&lang=ru&type=accurate&appid="+weather_api_id, true);
+*/
+ 
     req.onload = function(e) {
         if (req.readyState == 4) {
             if (req.status == 200) {
