@@ -28,79 +28,94 @@
         "resources": {
             "media": [
                 {
-                    "file": "images/menu_icon.png",
+                    "file": "images/weather_bg_top",
+                    "name": "WEATHER_BG_TOP",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/weather_bg",
+                    "name": "WEATHER_BG",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/seconds",
+                    "name": "SECONDS",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/months_ru",
+                    "name": "MONTHS",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/months_en",
+                    "name": "MONTHS_EN",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/menu_icon",
                     "menuIcon": true,
                     "name": "ICON",
+                    "targetPlatforms": null,
                     "type": "bitmap"
                 },
                 {
-                    "file": "images/days_bg.png",
-                    "name": "DAYS_BG",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/days.png",
-                    "name": "DAYS",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/months.png",
-                    "name": "MONTHS",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/days_en.png",
-                    "name": "DAYS_EN",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/months_en.png",
-                    "name": "MONTHS_EN",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/digits_date.png",
+                    "file": "images/digits_date",
                     "name": "DIGITS_DAY",
+                    "targetPlatforms": null,
                     "type": "bitmap"
                 },
                 {
-                    "file": "images/weather_bg_top.png",
-                    "name": "WEATHER_BG_TOP",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/weather_bg.png",
-                    "name": "WEATHER_BG",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/seconds.png",
-                    "name": "SECONDS",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/bluetooth.png",
-                    "name": "BLUETOOTH",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/background.png",
-                    "name": "BACKGROUND",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/battery.png",
-                    "name": "BATTERY",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/ampm.png",
-                    "name": "AMPM",
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/digits_clock.png",
+                    "file": "images/digits_clock",
                     "name": "DIGITS_TIME",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/days_ru",
+                    "name": "DAYS",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/days_en",
+                    "name": "DAYS_EN",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/days_bg",
+                    "name": "DAYS_BG",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/bluetooth",
+                    "name": "BLUETOOTH",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/battery",
+                    "name": "BATTERY",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/background",
+                    "name": "BACKGROUND",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/ampm",
+                    "name": "AMPM",
+                    "targetPlatforms": null,
                     "type": "bitmap"
                 },
                 {
@@ -114,12 +129,13 @@
         "targetPlatforms": [
             "aplite",
             "basalt",
-            "chalk"
+            "chalk",
+            "diorite"
         ],
         "uuid": "16cdef21-57ae-4e01-93ed-4880e3e5abac",
         "watchapp": {
             "watchface": true
         }
     },
-    "version": "3.2.0"
+    "version": "3.3.0"
 }
